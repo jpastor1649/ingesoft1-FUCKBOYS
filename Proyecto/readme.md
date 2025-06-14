@@ -4,6 +4,8 @@
 
 ## 👥 FUCKBOYS 😈
 
+## 📁Estructura del Proyecto
+> Cuando exista la estructura te avisamos🐸
 
 ## 📬 Contacto e Integrantes Activos 🧑‍💻
 
