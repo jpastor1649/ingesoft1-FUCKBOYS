@@ -1,8 +1,10 @@
 # 🚀 Sistema de Gestión de Consumos y Arrendamientos Residenciales🗿
 
-## 👥 FUCKBOYS😈
 
-## 📬 Contacto e Integrantes Activos 💪
+## 👥 FUCKBOYS 😈
+
+
+## 📬 Contacto e Integrantes Activos 🧑‍💻
 
 | Nombre completo | Rol en el proyecto | Contacto 📧 |
 |-----------------|--------------------|-------------|
@@ -15,7 +17,7 @@
 
 ## 🧠 Descripción del Proyecto
 
-Este proyecto tiene como objetivo principal desarrollar una aplicación que permita registrar, calcular y distribuir equitativamente los costos de servicios públicos (agua, luz y gas) en un edificio residencial de 6 apartamentos, orientado a propietarios o administradores de edificios pequeños que necesitan automatizar y organizar los cobros mensuales de forma clara y justa.
+Este proyecto tiene como objetivo principal desarrollar una aplicación que permita registrar, calcular y distribuir equitativamente los costos de servicios públicos (agua💧, luz💡 y gas🔥) en un edificio residencial de 6 apartamentos, orientado a propietarios o administradores de edificios pequeños que necesitan automatizar y organizar los cobros mensuales de forma clara y justa🤝.
 
 El sistema/proyecto pretende:
 - 🏠 Manejar tanto consumos compartidos como individuales, dependiendo del tipo de servicio.
