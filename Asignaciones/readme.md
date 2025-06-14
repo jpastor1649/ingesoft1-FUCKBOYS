@@ -8,11 +8,10 @@
 
 | Archivo                                                 | Descripción breve                                   | 
 | ------------------------------------------------------- | --------------------------------------------------- | 
-| **Analisis\_de\_Requerimientos\_y\_casos\_de\_uso.pdf** | Revisión de requisitos y diagramas de casos de uso. |  
-| **Taller\_01.pdf**                                      | Lista de requerimientos de una conversacion con IA | 
-| **Tarea\_01.pdf**                                       | Preguntas sobre algo muy importante | 
-| **Tarea\_02.pdf**                                       | Preguntas sobre el manifiesto agil | 
-| **Tarea\_04.pdf**                                       | Tutorial de Git completado |
+| **📄 Taller\_01.pdf**                                      | Lista de requerimientos de una conversacion con IA | 
+| **📄 Tarea\_01.pdf**                                       | Preguntas sobre algo muy importante | 
+| **📄 Tarea\_02.pdf**                                       | Preguntas sobre el manifiesto agil | 
+| **📄 Tarea\_04.pdf**                                       | Tutorial de Git completado |
 
 ---
 
