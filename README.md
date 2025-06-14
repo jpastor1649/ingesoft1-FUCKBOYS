@@ -25,7 +25,7 @@ ingesoft1-FUCKBOYS/
 * **Materia:** Ingeniería de Software I 
 * **Profesor:** Oscar Eduardo Alvarez Rodriguez (GOAT🐐)
 * **Semestre:** 2025-1
-* **Metodología:** Scrum🤓 + Código🧑‍💻 + Café☕ + Bandidas💋 = Exito💯
+* **Metodología:** Scrum🤓 + Código🧑‍💻 + Cachaza🍺 + Bandidas💋 = Exito💯
 
 ---
 
