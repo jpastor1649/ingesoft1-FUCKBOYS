@@ -2,31 +2,24 @@
 
 ## 👥 FUCKBOYS😈
 
-
 ## 📬 Contacto e Integrantes Activos 💪
 
 | Nombre completo | Rol en el proyecto | Contacto 📧 |
 |-----------------|--------------------|-------------|
-| Andres Hernando Borda Muñoz    | Desarrollador Full Stack | anhbordamu@unal.edu.co |
-| Daniel Esteban Lopez Guaca    | Diseñadora UI/UX         | dalopezgu@unal.edu.co	 |
-| Jefferson Jair Figueroa Escobar   | Analista de Datos         | jfigueroae@unal.edu.co |
-| John Alejandro Pastor Sandoval   | Analista de Datos         | jpastor@unal.edu.co |
+| Andres Hernando Borda Muñoz    | Ingeñero| anhbordamu@unal.edu.co |
+| Daniel Esteban Lopez Guaca    | Ingeñero | dalopezgu@unal.edu.co	 |
+| Jefferson Jair Figueroa Escobar   | Ingeñero | jfigueroae@unal.edu.co |
+| John Alejandro Pastor Sandoval   | Ingeñero | jpastor@unal.edu.co |
 
-🟢 **Nota**: Solo se listan los integrantes activos y que están colaborando actualmente 😐
-
----
+🟢 **Nota**: Solo se listan los integrantes activos y que están colaborando actualmente 🫠
 
 ## 🧠 Descripción del Proyecto
 
-Este proyecto tiene como objetivo principal **[describir brevemente qué hace o resuelve el proyecto]**, orientado a [tipo de usuarios, contexto o problemática].
+Este proyecto tiene como objetivo principal desarrollar una aplicación que permita registrar, calcular y distribuir equitativamente los costos de servicios públicos (agua, luz y gas) en un edificio residencial de 6 apartamentos, orientado a propietarios o administradores de edificios pequeños que necesitan automatizar y organizar los cobros mensuales de forma clara y justa.
 
 El sistema/proyecto pretende:
-- 🎯 Resolver [problema específico]
-- 📈 Mejorar [algún proceso o experiencia]
-- 🔗 Integrarse con [herramientas, plataformas o servicios]
+- 🏠 Manejar tanto consumos compartidos como individuales, dependiendo del tipo de servicio.
+- 🧾 Consolidar los valores de servicios y arriendo mensual para generar automáticamente un recibo por apartamento.
+- 📊 Llevar un historial de pagos por periodo para facilitar la gestión contable y el seguimiento de los pagos realizados o pendientes.
+- 🫂 Mejorar la experiencia de convivencia con vecinos de los demas apartamentos
 
----
-
-## 🎯 Objetivo General
-
-Desarrollar una solución que permita **[enunciar claramente el objetivo del sistema o aplicación]**, optimizando recursos, mejorando la experiencia del usuario y asegurando escalabilidad y facilidad de mantenimiento.
