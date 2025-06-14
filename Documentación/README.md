@@ -11,7 +11,7 @@
 | 📂 Casos\_de\_uso         | Contiene los casos de uso detallados del sistema.                           |
 | 📂 Diagramas            | Diagramas UML, de clases, de actividades y de arquitectura.                |
 | 📂 Historias\_de\_usuario  | Historias de usuario organizadas por sprint.                               |
-| 📄 Proyecto.md     | Documento donde se levantan los requerimientos funcionales y no funcionales del proyecto |
+| 📄 Proyecto.pdf     | Documento donde se levantan los requerimientos funcionales y no funcionales del proyecto |
 | 📄 README.md            | Este archivo con la descripción general y enlaces útiles. 
 
 ## 🔗 Enlaces útiles
