@@ -4,34 +4,21 @@
 
 ---
 
-## 🗂 Estructura de Archivos
-
-```bash
-Asignaciones/
-├── Analisis_de_Requerimientos_y_casos_de_uso.pdf    # Documento de requisitos y casos de uso
-├── Taller_01.pdf                                     # Primer taller de clase
-├── Tarea_01.pdf                                      # Primera tarea asignada
-├── Tarea_02.pdf                                      # Segunda tarea asignada
-├── Tarea_04.pdf                                      # Cuarta tarea asignada
-└── README.md                                         # Este archivo de guía
-```
-
----
-
 ## 📝 Descripción de Contenidos
 
 | Archivo                                                 | Descripción breve                                   | 
 | ------------------------------------------------------- | --------------------------------------------------- | 
 | **Analisis\_de\_Requerimientos\_y\_casos\_de\_uso.pdf** | Revisión de requisitos y diagramas de casos de uso. |  
-| **Taller\_01.pdf**                                      | Ejercicios prácticos relacionados con modelado UML. | 
-| **Tarea\_01.pdf**                                       | Ejercicios de teoría y práctica sobre metodologías. | 
-| **Tarea\_02.pdf**                                       | Continuación de tareas teóricas & prácticas.        | 
-| **Tarea\_04.pdf**                                       | Tareas avanzadas y ejercicios de refuerzo.          |
+| **Taller\_01.pdf**                                      | Lista de requerimientos de una conversacion con IA | 
+| **Tarea\_01.pdf**                                       | Preguntas sobre algo muy importante | 
+| **Tarea\_02.pdf**                                       | Preguntas sobre el manifiesto agil | 
+| **Tarea\_04.pdf**                                       | Tutorial de Git completado |
 
 ---
 
 ## 🚀 Cómo Usar Estas Asignaciones
 * Copiate pero que el profesor no lo note😏
+* Son respuestas principalmente subjetivas, asi que haz lo que tu corazon te pida🫶
 
 ---
 
