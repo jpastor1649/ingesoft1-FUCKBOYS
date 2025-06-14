@@ -5,7 +5,7 @@ Aquí encontrarás recursos clave para el desarrollo del proyecto, así como el 
 
 ## 🔗 Enlaces útiles
 
-* 📄 [Plantilla de planificación técnica y de trabajo] https://docs.google.com/spreadsheets/d/1rS0-0XtOPHzzVGpsGvfly1sCMn6klgCSecuaVcyIazk/edit?usp=sharing
+* 📄 [Plantilla de planificación técnica y de trabajo](https://docs.google.com/spreadsheets/d/1rS0-0XtOPHzzVGpsGvfly1sCMn6klgCSecuaVcyIazk/edit?usp=sharing)
 
 ---
 
