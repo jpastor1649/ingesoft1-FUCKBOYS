@@ -86,7 +86,7 @@ Carpeta dedicada a talleres, avances de clase y tareas asignadas durante el seme
 | 🛠 Git + GitHub | Control de versiones     |
 ---
 
-## 🔮 Estado Actual del Proyecto 🤡
+## 🔮 Estado Actual del Curso 🤡
 
 * **Asignaciones:** En curso / algunas entregadas 🎯
 * **Documentación:** En construcción 🧱
