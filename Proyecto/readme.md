@@ -2,7 +2,6 @@
 
 ## 👥 FUCKBOYS😈
 
----
 
 ## 📬 Contacto e Integrantes Activos 💪
 
