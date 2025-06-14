@@ -25,3 +25,4 @@ El sistema/proyecto pretende:
 - 📊 Llevar un historial de pagos por periodo para facilitar la gestión contable y el seguimiento de los pagos realizados o pendientes.
 - 🫂 Mejorar la experiencia de convivencia con vecinos de los demas apartamentos
 
+> " La vida es como una lenteja o la tomas, o la dejas "
