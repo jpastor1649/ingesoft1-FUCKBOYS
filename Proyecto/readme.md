@@ -1,6 +1,6 @@
 # 🚀 Sistema de Gestión de Consumos y Arrendamientos Residenciales🗿
 
-¡Bienvenid@ a la carpeta del **Proyecto Final**! Aquí encontrarás todo el código fuente, recursos y módulos necesarios para que la aplicación funcione como se espera (o al menos lo intentamos 😅). Organizado por componentes y con buena documentación (esta en la carpeta documentacion los documentos aburridos) esta carpeta es el corazón técnico del equipo FUCKBOYS 💅.
+¡Bienvenid@ a la carpeta del **Proyecto Final**! Aquí encontrarás todo el código fuente, recursos y módulos necesarios para que la aplicación funcione como se espera (o al menos lo intentamos 😅). Organizado por componentes y con buena documentación (Los documentos aburridos😒 estan en la carpeta "Documentación") esta carpeta es el corazón técnico del equipo FUCKBOYS 💅.
 
 ## 👥 FUCKBOYS 😈
 
