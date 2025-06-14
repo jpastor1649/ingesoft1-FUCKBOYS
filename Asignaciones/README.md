@@ -1,5 +1,4 @@
-# 📂 Asignaciones – Ingeniería de Software I
-
+# 📂 Asignaciones 
 ¡Bienvenid@ a la carpeta de **Asignaciones**! Aquí encontrarás todos los talleres y tareas individuales o grupales a lo largo del semestre, organizados para tu comodidad.
 
 ---
