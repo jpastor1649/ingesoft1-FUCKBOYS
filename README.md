@@ -1,93 +1,103 @@
-# 🚀 Proyecto Final – Ingeniería de Software I 🧠  
-## 😎 FUCKBOYS Team
+# 🚀 **UNAL - Ingeniería de Software I** 🧠
 
-¡Bienvenid@ al repositorio oficial del curso de **Ingeniería de Software I**!  
-Aquí vas a encontrar desde tareas sueltas hasta la gloria del proyecto final.  
-Todo hecho por el legendario equipo **FUCKBOYS** (Formal Users Creating Knowledge-Based Object-Oriented Yet Savage systems 💅).
+## 😎 **FUCKBOYS Team**
+
+¡Bienvenid@ al repositorio oficial del curso de **Ingeniería de Software I**!
+Aquí encontrarás desde tareas individuales hasta la gloria de nuestro proyecto final.
 
 ---
 
 ## 📁 Estructura del Repositorio
 
 ```bash
-fuckboys-ingenieria-software/
-├── 📂 Asignaciones/        # Trabajos prácticos, talleres y tareas individuales o grupales
-├── 📂 Documentacion/       # Planificación, requisitos, casos de uso, diagramas, manuales
+ingesoft1-FUCKBOYS/
+├── 📂 Asignaciones/        # Talleres, tareas y entregas parciales
+├── 📂 Documentacion/       # Requisitos, diagramas, manuales y bitácoras
 ├── 📂 Proyecto/            # Código fuente del proyecto final
-├── README.md               # Este mismo archivo
-└── .gitignore              # Ignora archivos innecesarios en el control de versiones
+├── README.md              # Este archivo
+└── .gitignore             # Archivos ignorados por Git
 ```
-📚 Información del Curso
-  🏫 Materia: Ingeniería de Software I
 
-  🧑‍🏫 Profesor: [Nombre del profesor]
+---
 
-  📅 Semestre: 2025-1
+## 📚 Información del Curso 🏫
 
-  🧠 Metodología: Scrum + Código + Café + Memes = 💯
+* **Materia:** Ingeniería de Software I
+* **Profesor:** Oscar Eduardo Alvarez Rodriguez
+* **Semestre:** 2025-1
+* **Metodología:** Scrum🤓 + Código🧑‍💻 + Café☕ + Bandidas💋 = Exito💯
 
-👥 Integrantes del Equipo
-| Nombre           | Rol                 | GitHub                                 |
-| ---------------- | ------------------- | -------------------------------------- |
-| Juan Pérez       | Scrum Master 🧭     | [@juanp](https://github.com/juanp)     |
-| Camila Rodríguez | Dev & Tester 🛠️    | [@camilar](https://github.com/camilar) |
-| Esteban Gómez    | Analista 📊         | [@esteg](https://github.com/esteg)     |
-| Laura Martínez   | Diseñadora UX/UI 🎨 | [@laumart](https://github.com/laumart) |
-| Andrés Torres    | Dev & BD 💾         | [@atorres](https://github.com/atorres) |
+---
 
-📝 Asignaciones
-  📂 Carpeta dedicada a los talleres, entregas parciales, avances de clase y otras tareas asignadas durante el semestre.
-Todo organizado y comentado, porque si vamos a sufrir, que sea con estilo 😎
+## 👥 Integrantes del Equipo
 
-  📑 Documentación
-    Incluye:
+| Nombre           | Rol                 | GitHub   |
+| ---------------- | ------------------- | -------- |
+| Andres Hernando Borda Muñoz    | Ingeñero| ahbordam |
+| Daniel Esteban Lopez Guaca    | Ingeñero | figueroa013	 |
+| Jefferson Jair Figueroa Escobar   | Ingeñero | Danielopez27|
+| John Alejandro Pastor Sandoval   | Ingeñero | jpastor1649 |
 
-      📌 Requisitos funcionales y no funcionales
+## 🔍 ¿Qué encontrarás en el Repositorio?
 
-      🧠 Casos de uso y diagramas (UML, ERD, etc.)
+* 📂 Asignaciones: Talleres, tareas individuales y grupales.
 
-      📋 Bitácoras de trabajo
+* 📑 Documentación: Requisitos, diagramas, manuales y bitácoras.
 
-      🛠️ Manuales de usuario y técnico
+* 💻 Proyecto: Código fuente, módulos y configuraciones.
 
-      🗂️ Planificación con metodología ágil (Scrum, roles, sprints)
+---
 
+## 📝 Asignaciones 📂
 
-💻 Proyecto Final – Sistema de Consumo Compartido
+Carpeta dedicada a talleres, avances de clase y tareas asignadas durante el semestre. ¡Organizado y comentado para sufrir con estilo! 😎
 
-  🧾 Objetivo:
-      Desarrollar una aplicación para calcular y distribuir de forma justa los costos de servicios públicos (agua, luz, gas) en un edificio de 6 apartamentos.
+---
 
-  Características clave:
+## 📑 Documentación 📂
 
-    Registro de apartamentos y residentes
+* 📌 Requisitos funcionales y no funcionales
+* 🧠 Casos de uso y diagramas (UML, ERD)
+* 📝 Bitácoras de trabajo
+* 🛠️ Manuales de usuario y técnico
+* 🗂️ Planificación ágil (Scrum, roles, sprints)
 
-    Cálculo de consumos compartidos e individuales
+---
 
-    Generación de recibos mensuales en PDF
+## 💻 Proyecto Final – Sistema de Consumo Compartido
 
-    Control de historial de pagos por periodo
+**Objetivo:** Desarrollar una aplicación para calcular y distribuir de forma justa los costos de servicios públicos (agua💧, luz💡 y gas🔥) en un edificio de apartamentos.
 
-    Interfaz sencilla e intuitiva para usuarios finales
+**Características clave:**
 
+* Registro de apartamentos y residentes 🏢
+* Cálculo de consumos compartidos e individuales 📠
+* Generación de recibos mensuales en PDF 📄
+* Control de historial de pagos por periodo 🧾
+* Interfaz sencilla e intuitiva 😎
 
-| Tecnología      | Descripción                              |
-| --------------- | ---------------------------------------- |
-| 🐍 Python       | Lógica de backend                        |
-| 🐘 MySQL        | Base de datos relacional                 |
-| 📄 ReportLab    | Generación de recibos PDF                |
-| 🛠 Git + GitHub | Control de versiones y trabajo en equipo |
+## **Tecnologías:**
 
-🔮 Estado Actual
-    ✅ Asignaciones: En curso / algunas entregadas
+| Tecnologia | Funcionalidad |
+|-----------------|--------------------|
+| 🐍 Python     | Lógica backend             |
+| 🐘 MySQL      | Base de datos relacional   |
+| 📄 ReportLab  | Generación de PDF          |
+| 🛠 Git + GitHub | Control de versiones     |
+---
 
-📄 Documentación: En construcción 🧱
+## 🔮 Estado Actual del Proyecto 🤡
 
-🚧 Proyecto final: Módulo de facturación implementado, conectando interfaz y base de datos
+* **Asignaciones:** En curso / algunas entregadas 🎯
+* **Documentación:** En construcción 🧱
+* **Proyecto final:** Funciona si lo miras con los ojos cerrados 🥹
 
-🏁 Fecha de entrega: 26 de julio de 2025
+**Fecha de entrega:** 26 de julio de 2025 😧
 
-📜 Licencia
-MIT License – Haz lo que quieras, pero no digas que lo hiciste tú sin invitarnos a la presentación 😤
+---
 
-“No elegimos el nombre FUCKBOYS… el nombre nos eligió a nosotros.” – El equipo, probablemente después de no dormir 36 horas.
+## 📜 Licencia
+
+**MIT License** – Haz lo que quieras, pero no digas que lo hiciste tú sin invitarnos a la presentación 😤
+
+> “No elegimos el nombre FUCKBOYS… el nombre nos eligió a nosotros.”
