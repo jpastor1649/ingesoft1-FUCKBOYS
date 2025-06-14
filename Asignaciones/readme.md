@@ -17,7 +17,7 @@
 
 ## 🚀 Cómo Usar Estas Asignaciones
 * Copiate pero que el profesor no lo note😏
-* Son respuestas principalmente subjetivas, asi que haz lo que tu corazon te pida🫶
+* Son respuestas principalmente subjetivas, asi que haz lo que tu corazon te diga🫶
 
 ---
 
