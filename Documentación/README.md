@@ -1,15 +1,12 @@
 # 📁 Documentación – Enlaces útiles
 
-Aquí encontrarás recursos clave para el desarrollo del proyecto, así como el enlace a la plantilla de planificación que debe mantenerse actualizada durante todo el semestre.
-
+Aquí encontrarás recursos clave para el desarrollo del proyecto, así como el enlace a la plantilla de planificación.
 ---
 
 ## 🔗 Enlaces útiles
 
-* 📄 [Plantilla de planificación técnica y de trabajo](https://example.com/plantilla-planificacion)
-* 🐍 [Documentación oficial de Python](https://docs.python.org/3/)
-* 📚 [Artículo interesante sobre metodologías ágiles](https://ejemplo.com/articulo)
+* 📄 [Plantilla de planificación técnica y de trabajo] https://docs.google.com/spreadsheets/d/1rS0-0XtOPHzzVGpsGvfly1sCMn6klgCSecuaVcyIazk/edit?usp=sharing
 
 ---
 
-> Recuerda mantener la planificación al día con responsables, cronograma, hitos y dependencias 📅✅
+> "Nunca olvides, las mujeres se  van, los amigos programadores jamas💦" 
