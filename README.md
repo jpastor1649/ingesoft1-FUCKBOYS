@@ -42,7 +42,7 @@ ingesoft1-FUCKBOYS/
 
 * 📂 Asignaciones: Talleres, tareas individuales y grupales.
 
-* 📑 Documentación: Requisitos, diagramas, manuales y bitácoras.
+* 📑 Documentación: Requisitos, diagramas, manuales.
 
 * 💻 Proyecto: Código fuente, módulos y configuraciones.
 
@@ -57,8 +57,7 @@ Carpeta dedicada a talleres, avances de clase y tareas asignadas durante el seme
 ## 📑 Documentación 📂
 
 * 📌 Requisitos funcionales y no funcionales
-* 🧠 Casos de uso y diagramas (UML, ERD)
-* 📝 Bitácoras de trabajo
+* 🧠 Casos de uso y diagramas (UML)
 * 🛠️ Manuales de usuario y técnico
 * 🗂️ Planificación ágil (Scrum, roles, sprints)
 
