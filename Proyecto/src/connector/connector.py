@@ -1,10 +1,11 @@
-"""This module provides runtime support for type hints
+"""
     Author: Jpastor
     Version: 1.0.0
     License: MIT License
     Date: 2025-07-04
 """
 
+"""This module provides runtime support for type hints"""
 from typing import Any
 
 import mysql.connector
