@@ -67,7 +67,7 @@ class Connector:
         self.table = table
 
     def insert(self, fields: list[str], values: tuple[Any, ...]) -> int:
-        """_Insert a new record into the table._
+        """Insert a new record into the table.
 
         Args:
             fields (list[str]): _list of field names to insert into_
@@ -84,7 +84,7 @@ class Connector:
     def update(
         self, fields: list[str], values: tuple[Any, ...], id_field: str, id_value: Any
     ) -> int:
-        """_summary_
+        """Update an existing record in the table.
 
         Args:
             fields (list[str]): _list of field names to update_
