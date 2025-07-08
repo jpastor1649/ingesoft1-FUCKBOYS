@@ -1,6 +1,5 @@
 """
-Modelo Inquilino - Personas que viven o se asocian a un apartamento.
-Tabla 'inquilinos' en BD.
+Tabla: 'inquilinos'.
 Author: ahbordam
 Versión: 1.0.0
 Date: 2025-07-08
