@@ -5,12 +5,13 @@ Versión: 1.0.0
 Date: 2025-07-08
 """
 from typing import Optional
+from connector.connector import Connector
 
 
 class Apartamento:
 
     def __init__(self, id: int = 0, cantidad_personas: int = 0, observaciones: str = ""):
-
+ 
         self._id = id
         self._cantidad_personas = cantidad_personas
         self._observaciones = observaciones
@@ -18,6 +19,7 @@ class Apartamento:
     # Properties para ID
     @property
     def id(self) -> int:
+        """if loged = administrado"""
         return self._id
 
     @id.setter
