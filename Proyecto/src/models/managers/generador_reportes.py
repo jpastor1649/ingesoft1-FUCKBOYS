@@ -1,224 +1,209 @@
+"""
+    Generador de Reportes - Versión Mínima Viable
+"""
 from typing import Dict, Any, List
 from connector.connector import Connector
-from services.calculadora_recibos import CalculadoraRecibos
 
 
 class GeneradorReportes:
+    """
+    Generador simplificado de reportes
+    """
+    
     def __init__(self, connector: Connector):
+        """
+        Constructor del generador
+        
+        Args:
+            connector (Connector): Instancia del conector a la base de datos
+        """
         self.connector = connector
-        self.calculadora = CalculadoraRecibos(connector)
     
     def generar_reporte_mes(self, mes: str) -> Dict[str, Any]:
         """
-        Generar reporte completo de un mes
+        Generar reporte básico de un mes
+        
+        Args:
+            mes (str): Mes a reportar
+            
+        Returns:
+            Dict: Reporte del mes
         """
-        # Obtener distribución del mes
-        distribucion = self.calculadora.calcular_distribucion_mes_completo(mes)
+        # Obtener arrendos del mes
+        self.connector.set_table('arrendos')
+        arrendos = self.connector.get_filtered(f"arre_mes = '{mes.upper()}'")
         
-        if 'error' in distribucion:
-            return distribucion
+        # Obtener pagos del mes
+        self.connector.set_table('pagos')
+        pagos = self.connector.get_filtered(f"pago_mes = '{mes.upper()}'")
         
-        # Preparar reporte
-        reporte = {
-            'mes': mes,
-            'fecha_generacion': self._obtener_fecha_actual(),
-            'resumen_ejecutivo': self._generar_resumen_ejecutivo(distribucion),
-            'apartamentos': [],
-            'servicios': self._generar_resumen_servicios(mes),
-            'totales': distribucion.get('totales', {})
+        # Calcular totales
+        total_arrendos = sum(a['arre_valor'] for a in arrendos)
+        total_servicios = sum(p['pago_valorTotal'] for p in pagos)
+        
+        return {
+            'mes': mes.upper(),
+            'total_arrendos': total_arrendos,
+            'total_servicios': total_servicios,
+            'total_general': total_arrendos + total_servicios,
+            'cantidad_arrendos': len(arrendos),
+            'cantidad_pagos': len(pagos)
         }
-        
-        # Detalles por apartamento
-        for apar_id, datos in distribucion.get('apartamentos', {}).items():
-            apartamento_reporte = {
-                'apartamento_id': apar_id,
-                'arriendo': datos.get('total_arriendo', 0),
-                'servicios': datos.get('servicios', {}),
-                'total_servicios': datos.get('total_servicios', 0),
-                'total_general': datos.get('total_general', 0)
-            }
-            reporte['apartamentos'].append(apartamento_reporte)
-        
-        return reporte
     
     def generar_reporte_apartamento(self, apar_id: int, mes: str) -> Dict[str, Any]:
         """
-        Generar reporte específico de un apartamento
-        """
-        recibo = self.calculadora.calcular_recibo_apartamento_mes(apar_id, mes)
+        Generar reporte de un apartamento específico
         
-        # Obtener información adicional del apartamento
-        info_apartamento = self._obtener_info_apartamento(apar_id)
+        Args:
+            apar_id (int): ID del apartamento
+            mes (str): Mes a reportar
+            
+        Returns:
+            Dict: Reporte del apartamento
+        """
+        # Obtener arriendo del mes
+        self.connector.set_table('arrendos')
+        arrendos = self.connector.get_filtered(
+            f"arre_apar_id = {apar_id} AND arre_mes = '{mes.upper()}'"
+        )
+        
+        # Obtener pagos del mes
+        self.connector.set_table('pagos')
+        pagos = self.connector.get_filtered(
+            f"pago_lec_apar_id = {apar_id} AND pago_mes = '{mes.upper()}'"
+        )
+        
+        # Calcular totales
+        total_arriendo = arrendos[0]['arre_valor'] if arrendos else 0
+        total_servicios = sum(p['pago_valorTotal'] for p in pagos)
         
         return {
             'apartamento_id': apar_id,
-            'mes': mes,
-            'fecha_generacion': self._obtener_fecha_actual(),
-            'info_apartamento': info_apartamento,
-            'recibo': recibo,
-            'desglose_servicios': self._generar_desglose_servicios(apar_id, mes)
+            'mes': mes.upper(),
+            'arriendo': total_arriendo,
+            'servicios': {p['pago_lec_servicio']: p['pago_valorTotal'] for p in pagos},
+            'total_servicios': total_servicios,
+            'total_general': total_arriendo + total_servicios
         }
     
     def generar_reporte_recaudacion(self, mes: str) -> Dict[str, Any]:
         """
         Generar reporte de recaudación del mes
+        
+        Args:
+            mes (str): Mes a reportar
+            
+        Returns:
+            Dict: Reporte de recaudación
         """
-        # Obtener pagos del mes
-        pagos_mes = self._obtener_pagos_mes(mes)
-        arrendos_mes = self._obtener_arrendos_mes(mes)
+        # Obtener arrendos
+        self.connector.set_table('arrendos')
+        arrendos = self.connector.get_filtered(f"arre_mes = '{mes.upper()}'")
         
-        # Calcular totales
-        total_esperado_servicios = sum(p.get('pago_valorTotal', 0) for p in pagos_mes)
-        total_pagado_servicios = sum(p.get('pago_valorTotal', 0) for p in pagos_mes if p.get('pago_estado') == 'CANCELADO')
+        # Obtener pagos
+        self.connector.set_table('pagos')
+        pagos = self.connector.get_filtered(f"pago_mes = '{mes.upper()}'")
         
-        total_esperado_arrendos = sum(a.get('arre_valor', 0) for a in arrendos_mes)
-        total_pagado_arrendos = sum(a.get('arre_valor', 0) for a in arrendos_mes if a.get('arre_estado') == 'CANCELADO')
+        # Calcular arrendos
+        total_arrendos = sum(a['arre_valor'] for a in arrendos)
+        arrendos_pagados = sum(a['arre_valor'] for a in arrendos if a['arre_estado'] == 'CANCELADO')
         
-        total_esperado = total_esperado_servicios + total_esperado_arrendos
-        total_recaudado = total_pagado_servicios + total_pagado_arrendos
+        # Calcular servicios
+        total_servicios = sum(p['pago_valorTotal'] for p in pagos)
+        servicios_pagados = sum(p['pago_valorTotal'] for p in pagos if p['pago_estado'] == 'CANCELADO')
         
         return {
-            'mes': mes,
-            'fecha_generacion': self._obtener_fecha_actual(),
-            'servicios': {
-                'total_esperado': total_esperado_servicios,
-                'total_recaudado': total_pagado_servicios,
-                'pendiente': total_esperado_servicios - total_pagado_servicios,
-                'porcentaje_recaudo': round((total_pagado_servicios / total_esperado_servicios) * 100, 2) if total_esperado_servicios > 0 else 0
-            },
+            'mes': mes.upper(),
             'arrendos': {
-                'total_esperado': total_esperado_arrendos,
-                'total_recaudado': total_pagado_arrendos,
-                'pendiente': total_esperado_arrendos - total_pagado_arrendos,
-                'porcentaje_recaudo': round((total_pagado_arrendos / total_esperado_arrendos) * 100, 2) if total_esperado_arrendos > 0 else 0
+                'total': total_arrendos,
+                'pagado': arrendos_pagados,
+                'pendiente': total_arrendos - arrendos_pagados
             },
-            'totales': {
-                'total_esperado': total_esperado,
-                'total_recaudado': total_recaudado,
-                'pendiente': total_esperado - total_recaudado,
-                'porcentaje_recaudo_general': round((total_recaudado / total_esperado) * 100, 2) if total_esperado > 0 else 0
-            }
+            'servicios': {
+                'total': total_servicios,
+                'pagado': servicios_pagados,
+                'pendiente': total_servicios - servicios_pagados
+            },
+            'total_esperado': total_arrendos + total_servicios,
+            'total_recaudado': arrendos_pagados + servicios_pagados,
+            'total_pendiente': (total_arrendos - arrendos_pagados) + (total_servicios - servicios_pagados)
         }
     
-    def exportar_reporte_simple(self, reporte: Dict[str, Any]) -> str:
+    def exportar_reporte_texto(self, reporte: Dict[str, Any]) -> str:
         """
-        Exportar reporte en formato texto simple
+        Exportar reporte en formato texto
+        
+        Args:
+            reporte (Dict): Reporte a exportar
+            
+        Returns:
+            str: Reporte en formato texto
         """
         lineas = []
-        lineas.append("=" * 50)
-        lineas.append(f"REPORTE - {reporte.get('mes', 'N/A')}")
-        lineas.append(f"Fecha: {reporte.get('fecha_generacion', 'N/A')}")
-        lineas.append("=" * 50)
+        lineas.append("=" * 40)
+        lineas.append(f"REPORTE MES: {reporte.get('mes', 'N/A')}")
+        lineas.append("=" * 40)
         
-        # Totales
-        if 'totales' in reporte:
-            totales = reporte['totales']
-            lineas.append("\nTOTALES GENERALES:")
-            lineas.append(f"Total Arrendos: ${totales.get('total_arrendos', 0):,}")
-            lineas.append(f"Total Servicios: ${totales.get('total_servicios', 0):,}")
-            lineas.append(f"Total General: ${totales.get('total_general', 0):,}")
+        # Si es reporte general del mes
+        if 'total_arrendos' in reporte:
+            lineas.append(f"Total Arrendos: ${reporte['total_arrendos']:,}")
+            lineas.append(f"Total Servicios: ${reporte['total_servicios']:,}")
+            lineas.append(f"Total General: ${reporte['total_general']:,}")
         
-        # Apartamentos
-        if 'apartamentos' in reporte:
-            lineas.append("\nDETALLE POR APARTAMENTO:")
-            for apt in reporte['apartamentos']:
-                lineas.append(f"\nApartamento {apt['apartamento_id']}:")
-                lineas.append(f"  Arriendo: ${apt.get('arriendo', 0):,}")
-                lineas.append(f"  Servicios: ${apt.get('total_servicios', 0):,}")
-                lineas.append(f"  Total: ${apt.get('total_general', 0):,}")
+        # Si es reporte de apartamento
+        if 'apartamento_id' in reporte:
+            lineas.append(f"Apartamento: {reporte['apartamento_id']}")
+            lineas.append(f"Arriendo: ${reporte['arriendo']:,}")
+            lineas.append("Servicios:")
+            for servicio, valor in reporte.get('servicios', {}).items():
+                lineas.append(f"  {servicio}: ${valor:,}")
+            lineas.append(f"Total: ${reporte['total_general']:,}")
+        
+        # Si es reporte de recaudación
+        if 'total_esperado' in reporte:
+            lineas.append("ARRENDOS:")
+            lineas.append(f"  Total: ${reporte['arrendos']['total']:,}")
+            lineas.append(f"  Pagado: ${reporte['arrendos']['pagado']:,}")
+            lineas.append(f"  Pendiente: ${reporte['arrendos']['pendiente']:,}")
+            lineas.append("SERVICIOS:")
+            lineas.append(f"  Total: ${reporte['servicios']['total']:,}")
+            lineas.append(f"  Pagado: ${reporte['servicios']['pagado']:,}")
+            lineas.append(f"  Pendiente: ${reporte['servicios']['pendiente']:,}")
+            lineas.append("-" * 40)
+            lineas.append(f"TOTAL ESPERADO: ${reporte['total_esperado']:,}")
+            lineas.append(f"TOTAL RECAUDADO: ${reporte['total_recaudado']:,}")
+            lineas.append(f"TOTAL PENDIENTE: ${reporte['total_pendiente']:,}")
         
         return "\n".join(lineas)
     
-    def _generar_resumen_ejecutivo(self, distribucion: Dict[str, Any]) -> Dict[str, Any]:
-        """Generar resumen ejecutivo del mes"""
-        totales = distribucion.get('totales', {})
-        apartamentos = distribucion.get('apartamentos', {})
+    def obtener_resumen_general(self) -> Dict[str, Any]:
+        """
+        Obtener resumen general del sistema
+        
+        Returns:
+            Dict: Resumen general
+        """
+        # Total apartamentos
+        self.connector.set_table('apartamentos')
+        total_apartamentos = len(self.connector.get_all())
+        
+        # Total inquilinos
+        self.connector.set_table('inquilinos')
+        total_inquilinos = len(self.connector.get_all())
+        
+        # Arrendos activos
+        self.connector.set_table('arrendos')
+        arrendos = self.connector.get_all()
+        arrendos_activos = len([a for a in arrendos if a['arre_estado'] in ['PENDIENTE', 'CANCELADO']])
+        
+        # Pagos pendientes
+        self.connector.set_table('pagos')
+        pagos = self.connector.get_all()
+        pagos_pendientes = len([p for p in pagos if p['pago_estado'] == 'PENDIENTE'])
         
         return {
-            'total_apartamentos': totales.get('total_apartamentos', 0),
-            'total_ingresos': totales.get('total_general', 0),
-            'promedio_por_apartamento': round(totales.get('total_general', 0) / max(totales.get('total_apartamentos', 1), 1), 2),
-            'apartamento_mayor_valor': max(apartamentos.keys(), key=lambda x: apartamentos[x].get('total_general', 0)) if apartamentos else None
+            'total_apartamentos': total_apartamentos,
+            'total_inquilinos': total_inquilinos,
+            'arrendos_activos': arrendos_activos,
+            'pagos_pendientes': pagos_pendientes
         }
-    
-    def _generar_resumen_servicios(self, mes: str) -> Dict[str, Any]:
-        """Generar resumen de servicios del mes"""
-        servicios = ['ACUEDUCTO Y ASEO', 'ENERGIA', 'GAS NATURAL']
-        resumen = {}
-        
-        for servicio in servicios:
-            recibo = self._obtener_recibo_servicio_mes(mes, servicio)
-            if recibo:
-                resumen[servicio] = {
-                    'disponible': True,
-                    'consumo_total': recibo.get('reci_consumoFinal', 0) - recibo.get('reci_consumoInicial', 0)
-                }
-            else:
-                resumen[servicio] = {'disponible': False}
-        
-        return resumen
-    
-    def _generar_desglose_servicios(self, apar_id: int, mes: str) -> Dict[str, Any]:
-        """Generar desglose detallado de servicios para un apartamento"""
-        desglose = {}
-        servicios = ['ACUEDUCTO Y ASEO', 'ENERGIA', 'GAS NATURAL']
-        
-        for servicio in servicios:
-            valor = self.calculadora._calcular_servicio_apartamento(apar_id, mes, servicio)
-            factor = self.calculadora.calcular_factor_consumo_apartamento(apar_id, mes, servicio)
-            
-            desglose[servicio] = {
-                'valor': valor,
-                'factor_distribucion': round(factor * 100, 2)  # En porcentaje
-            }
-        
-        return desglose
-    
-    def _obtener_fecha_actual(self) -> str:
-        """Obtener fecha actual formateada"""
-        from datetime import datetime
-        return datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    
-    def _obtener_info_apartamento(self, apar_id: int) -> Dict[str, Any]:
-        """Obtener información básica del apartamento"""
-        tabla_original = self.connector.table
-        self.connector.set_table('apartamentos')
-        
-        where = f"apar_id = {apar_id}"
-        result = self.connector.get_filtered(where)
-        
-        self.connector.set_table(tabla_original)
-        return result[0] if result else {}
-    
-    def _obtener_recibo_servicio_mes(self, mes: str, servicio: str) -> Dict[str, Any]:
-        """Obtener recibo de un servicio en un mes"""
-        tabla_original = self.connector.table
-        self.connector.set_table('recibos')
-        
-        where = f"reci_mes = '{mes.upper()}' AND reci_servicio = '{servicio}'"
-        result = self.connector.get_filtered(where)
-        
-        self.connector.set_table(tabla_original)
-        return result[0] if result else {}
-    
-    def _obtener_pagos_mes(self, mes: str) -> List[Dict[str, Any]]:
-        """Obtener pagos de un mes"""
-        tabla_original = self.connector.table
-        self.connector.set_table('pagos')
-        
-        where = f"pago_mes = '{mes.upper()}'"
-        result = self.connector.get_filtered(where)
-        
-        self.connector.set_table(tabla_original)
-        return result
-    
-    def _obtener_arrendos_mes(self, mes: str) -> List[Dict[str, Any]]:
-        """Obtener arrendos de un mes"""
-        tabla_original = self.connector.table
-        self.connector.set_table('arrendos')
-        
-        where = f"arre_mes = '{mes.upper()}'"
-        result = self.connector.get_filtered(where)
-        
-        self.connector.set_table(tabla_original)
-        return result

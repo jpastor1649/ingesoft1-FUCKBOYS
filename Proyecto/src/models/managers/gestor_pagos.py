@@ -1,96 +1,133 @@
+"""
+    Gestor de Pagos - Versión Mínima Viable
+"""
 from typing import List, Dict, Any
 from connector.connector import Connector
-from models.pago import Pago
-from services.calculadora_recibos import CalculadoraRecibos
 
 
 class GestorPagos:
+    """
+    Gestor simplificado para operaciones de pagos
+    """
+    
     def __init__(self, connector: Connector):
+        """
+        Constructor del gestor
+        
+        Args:
+            connector (Connector): Instancia del conector a la base de datos
+        """
         self.connector = connector
-        self.pago = Pago(connector)
-        self.calculadora = CalculadoraRecibos(connector)
     
-    def generar_pagos_mes(self, mes: str) -> Dict[str, Any]:
+    def obtener_pagos_mes(self, mes: str) -> List[Dict[str, Any]]:
         """
-        Generar todos los pagos de servicios para un mes
-        """
-        distribucion = self.calculadora.calcular_distribucion_mes_completo(mes)
+        Obtener todos los pagos de un mes específico
         
-        if 'error' in distribucion:
-            return distribucion
-        
-        pagos_creados = 0
-        errores = []
-        
-        # Crear pagos para cada apartamento y servicio
-        for apar_id, datos in distribucion['apartamentos'].items():
-            servicios = datos.get('servicios', {})
+        Args:
+            mes (str): Mes a consultar
             
-            for servicio, valor in servicios.items():
-                if valor > 0:
-                    # Buscar lectura asociada
-                    lectura = self._obtener_lectura_apartamento_mes(apar_id, mes, servicio)
-                    if lectura:
-                        # Crear pago
-                        if self.pago.crear(
-                            lec_apar_id=apar_id,
-                            lec_fecha=lectura['lec_fecha'],
-                            lec_servicio=servicio,
-                            mes=mes,
-                            tipo_lectura='LECTURA CONTADOR INTERNO',
-                            consumo=int(lectura['lec_consumoFinal'] - lectura['lec_consumoInicial']),
-                            valor_total=int(valor),
-                            estado='PENDIENTE'
-                        ):
-                            pagos_creados += 1
-                        else:
-                            errores.append(f"Error creando pago {servicio} para apartamento {apar_id}")
-                    else:
-                        errores.append(f"No se encontró lectura de {servicio} para apartamento {apar_id}")
-        
-        return {
-            'mes': mes,
-            'pagos_creados': pagos_creados,
-            'errores': errores,
-            'exitoso': len(errores) == 0
-        }
+        Returns:
+            List[Dict]: Lista de pagos del mes
+        """
+        self.connector.set_table('pagos')
+        return self.connector.get_filtered(f"pago_mes = '{mes.upper()}'")
     
-    def registrar_pago_servicio(self, apar_id: int, fecha_lectura: str, servicio: str) -> bool:
+    def obtener_pagos_apartamento(self, apar_id: int) -> List[Dict[str, Any]]:
         """
-        Registrar pago de un servicio específico
-        """
-        from datetime import datetime
-        fecha_pago = datetime.now().strftime('%Y-%m-%d')
+        Obtener todos los pagos de un apartamento
         
-        return self.pago.registrar_pago(apar_id, fecha_lectura, servicio, fecha_pago)
-    
-    def obtener_resumen_pagos_mes(self, mes: str) -> Dict[str, Any]:
+        Args:
+            apar_id (int): ID del apartamento
+            
+        Returns:
+            List[Dict]: Lista de pagos del apartamento
         """
-        Obtener resumen de pagos de un mes
-        """
-        return self.pago.obtener_resumen_mes(mes)
+        self.connector.set_table('pagos')
+        return self.connector.get_filtered(f"pago_lec_apar_id = {apar_id}")
     
     def obtener_pagos_pendientes(self) -> List[Dict[str, Any]]:
         """
         Obtener todos los pagos pendientes
-        """
-        return self.pago.obtener_pendientes()
-    
-    def obtener_pagos_apartamento(self, apar_id: int) -> List[Dict[str, Any]]:
-        """
-        Obtener historial de pagos de un apartamento
-        """
-        return self.pago.obtener_por_apartamento(apar_id)
-    
-    def _obtener_lectura_apartamento_mes(self, apar_id: int, mes: str, servicio: str) -> Dict[str, Any]:
-        """
-        Obtener lectura de un apartamento para un mes y servicio específico
-        """
-        tabla_original = self.connector.table
-        self.connector.set_table('lecturas')
         
-        where = f"lec_apar_id = {apar_id} AND lec_mes = '{mes.upper()}' AND lec_servicio = '{servicio}'"
-        lecturas = self.connector.get_filtered(where)
+        Returns:
+            List[Dict]: Lista de pagos pendientes
+        """
+        self.connector.set_table('pagos')
+        return self.connector.get_filtered("pago_estado = 'PENDIENTE'")
+    
+    def registrar_pago(self, apar_id: int, fecha_lectura: str, servicio: str, fecha_pago: str) -> bool:
+        """
+        Actualizar un pago como cancelado
         
-        self.connector.set_table(tabla_original)
-        return lecturas[0] if lecturas else None
+        Args:
+            apar_id (int): ID del apartamento
+            fecha_lectura (str): Fecha de la lectura
+            servicio (str): Tipo de servicio
+            fecha_pago (str): Fecha del pago
+            
+        Returns:
+            bool: True si se actualizó correctamente
+        """
+        self.connector.set_table('pagos')
+        
+        # Actualizar estado y fecha de pago
+        fields = ['pago_estado', 'pago_fechaPago']
+        values = ('CANCELADO', fecha_pago)
+        
+        # Actualizar usando WHERE con múltiples condiciones
+        sql = f"""
+        UPDATE pagos 
+        SET pago_estado = %s, pago_fechaPago = %s 
+        WHERE pago_lec_apar_id = {apar_id} 
+        AND pago_lec_fecha = '{fecha_lectura}' 
+        AND pago_lec_servicio = '{servicio}'
+        """
+        
+        affected = self.connector._execute(sql, values)
+        return affected > 0
+    
+    def obtener_resumen_pagos(self) -> Dict[str, Any]:
+        """
+        Obtener resumen general de pagos
+        
+        Returns:
+            Dict: Resumen con totales
+        """
+        self.connector.set_table('pagos')
+        
+        # Total de pagos
+        todos = self.connector.get_all()
+        total = len(todos)
+        
+        # Pagos por estado
+        pendientes = len([p for p in todos if p['pago_estado'] == 'PENDIENTE'])
+        cancelados = len([p for p in todos if p['pago_estado'] == 'CANCELADO'])
+        cerrados = len([p for p in todos if p['pago_estado'] == 'CERRADO'])
+        
+        # Valor total
+        valor_total = sum(p['pago_valorTotal'] for p in todos)
+        valor_pendiente = sum(p['pago_valorTotal'] for p in todos if p['pago_estado'] == 'PENDIENTE')
+        valor_cancelado = sum(p['pago_valorTotal'] for p in todos if p['pago_estado'] == 'CANCELADO')
+        
+        return {
+            'total_pagos': total,
+            'pendientes': pendientes,
+            'cancelados': cancelados,
+            'cerrados': cerrados,
+            'valor_total': valor_total,
+            'valor_pendiente': valor_pendiente,
+            'valor_cancelado': valor_cancelado
+        }
+    
+    def obtener_pagos_servicio(self, servicio: str) -> List[Dict[str, Any]]:
+        """
+        Obtener todos los pagos de un servicio específico
+        
+        Args:
+            servicio (str): Tipo de servicio ('ACUEDUCTO Y ASEO', 'ENERGIA', 'GAS NATURAL')
+            
+        Returns:
+            List[Dict]: Lista de pagos del servicio
+        """
+        self.connector.set_table('pagos')
+        return self.connector.get_filtered(f"pago_lec_servicio = '{servicio}'")

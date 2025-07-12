@@ -1,126 +1,139 @@
-from typing import List, Dict, Any, Optional
+"""
+    Gestor de Apartamentos - Versión Mínima Viable
+"""
+from typing import List, Dict, Any
 from connector.connector import Connector
-from models.apartamento import Apartamento
-from models.inquilino import Inquilino
-from models.arriendo import Arriendo
 
 
 class GestorApartamentos:
-    def __init__(self, connector: Connector):
-        self.connector = connector
-        self.apartamento = Apartamento(connector)
-        self.inquilino = Inquilino(connector)
-        self.arriendo = Arriendo(connector)
+    """
+    Gestor simplificado para operaciones de apartamentos
+    """
     
-    def crear_apartamento_completo(self, apar_id: int, cantidad_personas: int, 
-                                   inq_id: int, nombre_inquilino: str, edad_inquilino: int,
-                                   valor_arriendo: int, mes: str) -> bool:
+    def __init__(self, connector: Connector):
         """
-        Crear apartamento con inquilino y arriendo en una sola operación
+        Constructor del gestor
         
         Args:
-            apar_id: ID del apartamento
-            cantidad_personas: Cantidad de personas
-            inq_id: ID del inquilino
-            nombre_inquilino: Nombre del inquilino
-            edad_inquilino: Edad del inquilino
-            valor_arriendo: Valor del arriendo
-            mes: Mes del arriendo
+            connector (Connector): Instancia del conector a la base de datos
         """
-        try:
-            # Crear inquilino
-            if not self.inquilino.crear(inq_id, nombre_inquilino, edad_inquilino):
-                return False
-            
-            # Crear apartamento
-            if not self.apartamento.crear(apar_id, cantidad_personas):
-                return False
-            
-            # Crear arriendo
-            from datetime import datetime, timedelta
-            fecha_inicio = datetime.now().strftime('%Y-%m-%d')
-            fecha_fin = (datetime.now() + timedelta(days=30)).strftime('%Y-%m-%d')
-            
-            if not self.arriendo.crear(inq_id, apar_id, fecha_inicio, fecha_fin, 
-                                     mes, valor_arriendo):
-                return False
-            
-            print(f"✅ Apartamento {apar_id} creado completamente")
-            return True
-            
-        except Exception as e:
-            print(f"❌ Error creando apartamento completo: {e}")
-            return False
+        self.connector = connector
     
-    def obtener_resumen_apartamento(self, apar_id: int) -> Dict[str, Any]:
+    def obtener_apartamentos(self) -> List[Dict[str, Any]]:
         """
-        Obtener resumen completo de un apartamento
+        Obtener lista de todos los apartamentos
+        
+        Returns:
+            List[Dict]: Lista de apartamentos
         """
-        apartamento = self.apartamento.obtener_por_id(apar_id)
-        if not apartamento:
-            return {'error': f'Apartamento {apar_id} no encontrado'}
+        self.connector.set_table('apartamentos')
+        return self.connector.get_all()
+    
+    def obtener_apartamento_con_inquilino(self, apar_id: int) -> Dict[str, Any]:
+        """
+        Obtener información de un apartamento y su inquilino actual
         
-        # Obtener arrendos
-        arrendos = self.arriendo.obtener_por_apartamento(apar_id)
+        Args:
+            apar_id (int): ID del apartamento
+            
+        Returns:
+            Dict: Información del apartamento e inquilino
+        """
+        # Obtener apartamento
+        self.connector.set_table('apartamentos')
+        apartamentos = self.connector.get_filtered(f"apar_id = {apar_id}")
         
-        # Obtener inquilino actual (si existe)
-        inquilino_actual = None
+        if not apartamentos:
+            return {}
+        
+        apartamento = apartamentos[0]
+        
+        # Buscar arriendo activo
+        self.connector.set_table('arrendos')
+        arrendos = self.connector.get_filtered(
+            f"arre_apar_id = {apar_id} AND arre_estado IN ('PENDIENTE', 'CANCELADO')"
+        )
+        
+        inquilino = None
         if arrendos:
-            arriendo_activo = next((a for a in arrendos if a['arre_estado'] in ['PENDIENTE', 'CANCELADO']), None)
-            if arriendo_activo:
-                inquilino_actual = self.inquilino.obtener_por_id(arriendo_activo['arre_inq_id'])
+            # Obtener inquilino del arriendo activo
+            self.connector.set_table('inquilinos')
+            inquilinos = self.connector.get_filtered(f"inq_id = {arrendos[0]['arre_inq_id']}")
+            if inquilinos:
+                inquilino = inquilinos[0]
         
         return {
             'apartamento': apartamento,
-            'inquilino_actual': inquilino_actual,
-            'total_arrendos': len(arrendos),
-            'arrendos_activos': len([a for a in arrendos if a['arre_estado'] in ['PENDIENTE', 'CANCELADO']]),
-            'estado': 'OCUPADO' if inquilino_actual else 'DISPONIBLE'
+            'inquilino': inquilino,
+            'arriendo': arrendos[0] if arrendos else None
         }
     
-    def listar_apartamentos_con_estado(self) -> List[Dict[str, Any]]:
+    def listar_apartamentos_estado(self) -> List[Dict[str, Any]]:
         """
-        Listar todos los apartamentos con su estado actual
+        Listar apartamentos con su estado de ocupación
+        
+        Returns:
+            List[Dict]: Lista de apartamentos con estado
         """
-        apartamentos = self.apartamento.obtener_todos()
+        # Obtener todos los apartamentos
+        self.connector.set_table('apartamentos')
+        apartamentos = self.connector.get_all()
+        
         resultado = []
         
         for apt in apartamentos:
-            resumen = self.obtener_resumen_apartamento(apt['apar_id'])
-            if 'error' not in resumen:
-                resultado.append({
-                    'apar_id': apt['apar_id'],
-                    'cantidad_personas': apt['apar_cantidadPersonas'],
-                    'estado': resumen['estado'],
-                    'inquilino_actual': resumen['inquilino_actual']['inq_nombre'] if resumen['inquilino_actual'] else None
-                })
+            # Verificar si tiene arriendo activo
+            self.connector.set_table('arrendos')
+            arrendos = self.connector.get_filtered(
+                f"arre_apar_id = {apt['apar_id']} AND arre_estado IN ('PENDIENTE', 'CANCELADO')"
+            )
+            
+            estado = 'OCUPADO' if arrendos else 'DISPONIBLE'
+            
+            resultado.append({
+                'apar_id': apt['apar_id'],
+                'cantidad_personas': apt['apar_cantidadPersonas'],
+                'estado': estado
+            })
         
         return resultado
     
-    def cambiar_inquilino(self, apar_id: int, nuevo_inq_id: int, nuevo_valor: int, mes: str) -> bool:
+    def obtener_arrendos_inquilino(self, inq_id: int) -> List[Dict[str, Any]]:
         """
-        Cambiar inquilino de un apartamento
+        Obtener todos los arrendos de un inquilino
+        
+        Args:
+            inq_id (int): ID del inquilino
+            
+        Returns:
+            List[Dict]: Lista de arrendos del inquilino
         """
-        try:
-            # Cerrar arrendos activos
-            arrendos_activos = [a for a in self.arriendo.obtener_por_apartamento(apar_id) 
-                              if a['arre_estado'] in ['PENDIENTE', 'CANCELADO']]
-            
-            for arriendo in arrendos_activos:
-                self.arriendo.cerrar_arriendo(
-                    arriendo['arre_fechaInicio'], 
-                    arriendo['arre_apar_id'], 
-                    arriendo['arre_inq_id']
-                )
-            
-            # Crear nuevo arriendo
-            from datetime import datetime, timedelta
-            fecha_inicio = datetime.now().strftime('%Y-%m-%d')
-            fecha_fin = (datetime.now() + timedelta(days=30)).strftime('%Y-%m-%d')
-            
-            return self.arriendo.crear(nuevo_inq_id, apar_id, fecha_inicio, fecha_fin, 
-                                     mes, nuevo_valor)
-                                     
-        except Exception as e:
-            print(f"❌ Error cambiando inquilino: {e}")
-            return False
+        self.connector.set_table('arrendos')
+        return self.connector.get_filtered(f"arre_inq_id = {inq_id}")
+    
+    def obtener_resumen_ocupacion(self) -> Dict[str, int]:
+        """
+        Obtener resumen de ocupación
+        
+        Returns:
+            Dict: Resumen con totales
+        """
+        # Total apartamentos
+        self.connector.set_table('apartamentos')
+        total_apartamentos = len(self.connector.get_all())
+        
+        # Apartamentos ocupados
+        self.connector.set_table('arrendos')
+        sql = """
+        SELECT COUNT(DISTINCT arre_apar_id) as ocupados 
+        FROM arrendos 
+        WHERE arre_estado IN ('PENDIENTE', 'CANCELADO')
+        """
+        result = self.connector._fetch(sql)
+        ocupados = result[0]['ocupados'] if result else 0
+        
+        return {
+            'total': total_apartamentos,
+            'ocupados': ocupados,
+            'disponibles': total_apartamentos - ocupados
+        }
