@@ -1,33 +1,18 @@
-"""
-    Generador de Reportes - Versión Mínima Viable
-"""
 from typing import Dict, Any, List
 from connector.connector import Connector
 
 
 class GeneradorReportes:
-    """
-    Generador simplificado de reportes
-    """
     
     def __init__(self, connector: Connector):
         """
         Constructor del generador
-        
-        Args:
-            connector (Connector): Instancia del conector a la base de datos
         """
         self.connector = connector
     
     def generar_reporte_mes(self, mes: str) -> Dict[str, Any]:
         """
         Generar reporte básico de un mes
-        
-        Args:
-            mes (str): Mes a reportar
-            
-        Returns:
-            Dict: Reporte del mes
         """
         # Obtener arrendos del mes
         self.connector.set_table('arrendos')
@@ -53,13 +38,6 @@ class GeneradorReportes:
     def generar_reporte_apartamento(self, apar_id: int, mes: str) -> Dict[str, Any]:
         """
         Generar reporte de un apartamento específico
-        
-        Args:
-            apar_id (int): ID del apartamento
-            mes (str): Mes a reportar
-            
-        Returns:
-            Dict: Reporte del apartamento
         """
         # Obtener arriendo del mes
         self.connector.set_table('arrendos')
@@ -89,12 +67,6 @@ class GeneradorReportes:
     def generar_reporte_recaudacion(self, mes: str) -> Dict[str, Any]:
         """
         Generar reporte de recaudación del mes
-        
-        Args:
-            mes (str): Mes a reportar
-            
-        Returns:
-            Dict: Reporte de recaudación
         """
         # Obtener arrendos
         self.connector.set_table('arrendos')
@@ -132,12 +104,6 @@ class GeneradorReportes:
     def exportar_reporte_texto(self, reporte: Dict[str, Any]) -> str:
         """
         Exportar reporte en formato texto
-        
-        Args:
-            reporte (Dict): Reporte a exportar
-            
-        Returns:
-            str: Reporte en formato texto
         """
         lineas = []
         lineas.append("=" * 40)
@@ -179,9 +145,6 @@ class GeneradorReportes:
     def obtener_resumen_general(self) -> Dict[str, Any]:
         """
         Obtener resumen general del sistema
-        
-        Returns:
-            Dict: Resumen general
         """
         # Total apartamentos
         self.connector.set_table('apartamentos')

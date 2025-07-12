@@ -1,33 +1,21 @@
-"""
-    Gestor de Pagos - Versión Mínima Viable
-"""
 from typing import List, Dict, Any
 from connector.connector import Connector
 
 
 class GestorPagos:
     """
-    Gestor simplificado para operaciones de pagos
+    Gestor para operaciones de pagos
     """
     
     def __init__(self, connector: Connector):
         """
         Constructor del gestor
-        
-        Args:
-            connector (Connector): Instancia del conector a la base de datos
         """
         self.connector = connector
     
     def obtener_pagos_mes(self, mes: str) -> List[Dict[str, Any]]:
         """
         Obtener todos los pagos de un mes específico
-        
-        Args:
-            mes (str): Mes a consultar
-            
-        Returns:
-            List[Dict]: Lista de pagos del mes
         """
         self.connector.set_table('pagos')
         return self.connector.get_filtered(f"pago_mes = '{mes.upper()}'")
@@ -35,12 +23,6 @@ class GestorPagos:
     def obtener_pagos_apartamento(self, apar_id: int) -> List[Dict[str, Any]]:
         """
         Obtener todos los pagos de un apartamento
-        
-        Args:
-            apar_id (int): ID del apartamento
-            
-        Returns:
-            List[Dict]: Lista de pagos del apartamento
         """
         self.connector.set_table('pagos')
         return self.connector.get_filtered(f"pago_lec_apar_id = {apar_id}")
@@ -48,9 +30,6 @@ class GestorPagos:
     def obtener_pagos_pendientes(self) -> List[Dict[str, Any]]:
         """
         Obtener todos los pagos pendientes
-        
-        Returns:
-            List[Dict]: Lista de pagos pendientes
         """
         self.connector.set_table('pagos')
         return self.connector.get_filtered("pago_estado = 'PENDIENTE'")
@@ -58,15 +37,6 @@ class GestorPagos:
     def registrar_pago(self, apar_id: int, fecha_lectura: str, servicio: str, fecha_pago: str) -> bool:
         """
         Actualizar un pago como cancelado
-        
-        Args:
-            apar_id (int): ID del apartamento
-            fecha_lectura (str): Fecha de la lectura
-            servicio (str): Tipo de servicio
-            fecha_pago (str): Fecha del pago
-            
-        Returns:
-            bool: True si se actualizó correctamente
         """
         self.connector.set_table('pagos')
         
@@ -89,9 +59,6 @@ class GestorPagos:
     def obtener_resumen_pagos(self) -> Dict[str, Any]:
         """
         Obtener resumen general de pagos
-        
-        Returns:
-            Dict: Resumen con totales
         """
         self.connector.set_table('pagos')
         
@@ -121,13 +88,7 @@ class GestorPagos:
     
     def obtener_pagos_servicio(self, servicio: str) -> List[Dict[str, Any]]:
         """
-        Obtener todos los pagos de un servicio específico
-        
-        Args:
-            servicio (str): Tipo de servicio ('ACUEDUCTO Y ASEO', 'ENERGIA', 'GAS NATURAL')
-            
-        Returns:
-            List[Dict]: Lista de pagos del servicio
+        Obtener todos los pagos de un servicio específicoo
         """
         self.connector.set_table('pagos')
         return self.connector.get_filtered(f"pago_lec_servicio = '{servicio}'")

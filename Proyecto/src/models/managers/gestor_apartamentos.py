@@ -1,6 +1,3 @@
-"""
-    Gestor de Apartamentos - Versión Mínima Viable
-"""
 from typing import List, Dict, Any
 from connector.connector import Connector
 
@@ -13,18 +10,12 @@ class GestorApartamentos:
     def __init__(self, connector: Connector):
         """
         Constructor del gestor
-        
-        Args:
-            connector (Connector): Instancia del conector a la base de datos
         """
         self.connector = connector
     
     def obtener_apartamentos(self) -> List[Dict[str, Any]]:
         """
         Obtener lista de todos los apartamentos
-        
-        Returns:
-            List[Dict]: Lista de apartamentos
         """
         self.connector.set_table('apartamentos')
         return self.connector.get_all()
@@ -32,12 +23,6 @@ class GestorApartamentos:
     def obtener_apartamento_con_inquilino(self, apar_id: int) -> Dict[str, Any]:
         """
         Obtener información de un apartamento y su inquilino actual
-        
-        Args:
-            apar_id (int): ID del apartamento
-            
-        Returns:
-            Dict: Información del apartamento e inquilino
         """
         # Obtener apartamento
         self.connector.set_table('apartamentos')
@@ -71,9 +56,6 @@ class GestorApartamentos:
     def listar_apartamentos_estado(self) -> List[Dict[str, Any]]:
         """
         Listar apartamentos con su estado de ocupación
-        
-        Returns:
-            List[Dict]: Lista de apartamentos con estado
         """
         # Obtener todos los apartamentos
         self.connector.set_table('apartamentos')
@@ -101,12 +83,6 @@ class GestorApartamentos:
     def obtener_arrendos_inquilino(self, inq_id: int) -> List[Dict[str, Any]]:
         """
         Obtener todos los arrendos de un inquilino
-        
-        Args:
-            inq_id (int): ID del inquilino
-            
-        Returns:
-            List[Dict]: Lista de arrendos del inquilino
         """
         self.connector.set_table('arrendos')
         return self.connector.get_filtered(f"arre_inq_id = {inq_id}")
@@ -114,9 +90,6 @@ class GestorApartamentos:
     def obtener_resumen_ocupacion(self) -> Dict[str, int]:
         """
         Obtener resumen de ocupación
-        
-        Returns:
-            Dict: Resumen con totales
         """
         # Total apartamentos
         self.connector.set_table('apartamentos')
