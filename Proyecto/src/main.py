@@ -1,11 +1,12 @@
+import sys
+sys.path.append("src")
 from connector.connector import Connector
 from init_db import DataBaseManager
 
-# Simulación de clase Usuario
 class Usuario:
     def __init__(self, id_usuario: int, rol: str):
         self.id_usuario = id_usuario
-        self.rol = rol  # 'admin' o 'inquilino'
+        self.rol = rol  
 
     def es_admin(self):
         return self.rol == 'admin'
@@ -54,7 +55,6 @@ def obtener_y_mostrar_tabla(nombre_tabla: str, connector: Connector, usuario: Us
         elif nombre_tabla == "arrendos":
             where = f"arre_inq_id = {usuario.id_usuario}"
         elif nombre_tabla == "apartamentos":
-            # Mostrar los apartamentos que ha arrendado el inquilino
             where = f"apar_id IN (SELECT arre_apar_id FROM arrendos WHERE arre_inq_id = {usuario.id_usuario})"
         elif nombre_tabla == "lecturas":
             where = f"lec_apar_id IN (SELECT arre_apar_id FROM arrendos WHERE arre_inq_id = {usuario.id_usuario})"
@@ -80,9 +80,7 @@ def obtener_y_mostrar_tabla(nombre_tabla: str, connector: Connector, usuario: Us
 
 
 def main():
-    db_manager = DataBaseManager()
-    db_manager.check()
-    
+
     usuario = seleccionar_usuario()
     if not usuario:
         return
