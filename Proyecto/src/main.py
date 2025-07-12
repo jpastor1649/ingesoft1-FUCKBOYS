@@ -1,4 +1,5 @@
 from connector.connector import Connector
+from init_db import DataBaseManager
 
 # Simulación de clase Usuario
 class Usuario:
@@ -79,6 +80,9 @@ def obtener_y_mostrar_tabla(nombre_tabla: str, connector: Connector, usuario: Us
 
 
 def main():
+    db_manager = DataBaseManager()
+    db_manager.check()
+    
     usuario = seleccionar_usuario()
     if not usuario:
         return
