@@ -17,7 +17,7 @@ class DataBaseManager:
             "script TRIGGERS.sql",
             "script DATA INSERTION.sql"
         ]
-        self.MYSQL_CMD = r"C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe"  # Ajusta si es necesario
+        self.MYSQL_CMD = r"C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe" 
 
     def verificar_db_existe(self):
         try:
@@ -65,10 +65,6 @@ class DataBaseManager:
             except subprocess.CalledProcessError as e:
                 print(f"❌ Error en {script_name}: {e}")
 
-    def lanzar_aplicacion(self):
-        print("🚀 Lanzando aplicación principal...")
-        # subprocess.run(["python", "src/main.py"])
-
     def check(self):
         """        Verifica si la base de datos existe, si no, la crea y ejecuta los scripts necesarios.
         """
@@ -78,7 +74,3 @@ class DataBaseManager:
             db_manager.ejecutar_scripts()
         else:
             print("✅ La base de datos ya existe.")
-        db_manager.lanzar_aplicacion()
-
-if __name__ == "__main__":
-    main()
