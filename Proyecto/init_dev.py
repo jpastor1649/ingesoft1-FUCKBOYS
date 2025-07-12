@@ -1,11 +1,6 @@
-import sys
 import os
-
-# Agrega src al path para importar main.py
-sys.path.append(os.path.join(os.path.dirname(__file__), "src"))
-from src.init_db import DataBaseManager
-
-import main  # Ahora puedes importar main como módulo
+import subprocess
+import sys
 
 def verificar_dependencias():
     print("🔍 Verificando entorno de desarrollo...")
@@ -13,10 +8,24 @@ def verificar_dependencias():
 
 def main_init():
     verificar_dependencias()
-    db = DataBaseManager()
-    db.check()
+
+    # # Ejecutar init_db.py
+    # ruta_db = os.path.join("src", "init_db.py")
+    # if not os.path.exists(ruta_db):
+    #     print(f"❌ No se encuentra el archivo: {ruta_db}")
+    #     return
+
+    # print("🛠 Inicializando base de datos...")
+    # subprocess.run([sys.executable, ruta_db], check=True)
+
+    # Ejecutar main.py
+    ruta_main = os.path.join("src", "main.py")
+    if not os.path.exists(ruta_main):
+        print(f"❌ No se encuentra el archivo: {ruta_main}")
+        return
+
     print("🚀 Lanzando aplicación...")
-    main.main()  
+    subprocess.run([sys.executable, ruta_main], check=True)
 
 if __name__ == "__main__":
     main_init()
