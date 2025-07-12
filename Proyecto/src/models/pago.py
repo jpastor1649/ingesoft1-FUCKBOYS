@@ -7,7 +7,12 @@ Date: 2025-07-08
 
 from datetime import date
 from typing import Optional
-from .enums import TipoServicio, EstadoPago, TipoLectura
+from typing import List
+import sys
+sys.path.append('src')
+from connector.connector import Connector
+sys.path.append('src/models')
+from models.enums import TipoServicio, EstadoPago, TipoLectura
 
 
 class Pago:
@@ -228,3 +233,26 @@ class Pago:
         if not isinstance(other, Pago):
             return False
         return self.obtener_clave_primaria() == other.obtener_clave_primaria()
+
+    @classmethod
+    def fetch_all(cls, connector: Connector) -> List['Pago']:
+        """
+        Obtiene todos los pagos de la tabla.
+        """
+        connector.set_table("pagos")
+        rows = connector.get_all()
+        return [cls.from_dict(row) for row in rows]
+    
+    @classmethod
+    def fetch_by_inquilino(cls, connector: Connector, inq_id: int) -> List['Pago']:
+        """
+        Obtiene todas los pagos asociados a los apartamentos que tiene un inquilino.
+        """
+        connector.set_table("pagos")
+        where = f"""pago_lec_apar_id IN (
+                        SELECT arre_apar_id 
+                        FROM arrendos 
+                        WHERE arre_inq_id = {inq_id}
+                )"""
+        rows = connector.get_filtered(where)
+        return [cls.from_dict(row) for row in rows]

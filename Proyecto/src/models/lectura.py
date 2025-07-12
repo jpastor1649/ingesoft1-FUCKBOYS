@@ -7,8 +7,13 @@ Date: 2025-07-08
 
 from datetime import date
 from typing import Optional
+from typing import List
 from decimal import Decimal
-from .enums import TipoServicio
+import sys
+sys.path.append('src')
+from connector.connector import Connector
+sys.path.append('src/models')
+from models.enums import TipoServicio
 
 
 class Lectura:
@@ -217,3 +222,25 @@ class Lectura:
         return (self.apartamento_id == other.apartamento_id and
                 self.fecha == other.fecha and
                 self.servicio == other.servicio)
+    @classmethod
+    def fetch_all(cls, connector: Connector) -> List['Lectura']:
+        """
+        Obtiene todos los arrendos de la tabla.
+        """
+        connector.set_table("lecturas")
+        rows = connector.get_all()
+        return [cls.from_dict(row) for row in rows]
+    
+    @classmethod
+    def fetch_by_inquilino(cls, connector: Connector, inq_id: int) -> List['Lectura']:
+        """
+        Obtiene todas las lecturas asociadas a los apartamentos que tiene un inquilino.
+        """
+        connector.set_table("lecturas")
+        where = f"""lec_apar_id IN (
+                        SELECT arre_apar_id 
+                        FROM arrendos 
+                        WHERE arre_inq_id = {inq_id}
+                )"""
+        rows = connector.get_filtered(where)
+        return [cls.from_dict(row) for row in rows]

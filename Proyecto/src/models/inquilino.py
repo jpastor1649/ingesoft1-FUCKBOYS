@@ -5,6 +5,10 @@ Versión: 1.0.0
 Date: 2025-07-08
 """
 
+import sys
+sys.path.append('src')
+from connector.connector import Connector
+from typing import List
 from typing import Optional
 
 
@@ -14,7 +18,7 @@ class Inquilino:
         self._nombre = nombre
         self._edad = edad
 
-    #Properties para ID
+    # Properties para ID
     @property
     def id(self) -> int:
         return self._id
@@ -53,18 +57,14 @@ class Inquilino:
         """
         Objeto a diccionario para operabilidad
         """
-        return {
-            'inq_id': self.id,
-            'inq_nombre': self.nombre,
-            'inq_edad': self.edad
-        }
+        return {"inq_id": self.id, "inq_nombre": self.nombre, "inq_edad": self.edad}
 
     @classmethod
-    def from_dict(cls, data: dict) -> 'Inquilino':
+    def from_dict(cls, data: dict) -> "Inquilino":
         return cls(
-            id=data.get('inq_id', 0),
-            nombre=data.get('inq_nombre', ''),
-            edad=data.get('inq_edad', 0)
+            id=data.get("inq_id", 0),
+            nombre=data.get("inq_nombre", ""),
+            edad=data.get("inq_edad", 0),
         )
 
     def es_valido(self) -> bool:
@@ -72,9 +72,9 @@ class Inquilino:
         Valida si el inquilino tiene datos válidos.
         """
         try:
-            return (self.id > 0 and 
-                   len(self.nombre.strip()) > 0 and 
-                   0 <= self.edad <= 100)
+            return (
+                self.id > 0 and len(self.nombre.strip()) > 0 and 0 <= self.edad <= 100
+            )
         except:
             return False
 
@@ -88,3 +88,22 @@ class Inquilino:
         if not isinstance(other, Inquilino):
             return False
         return self.id == other.id
+
+    @classmethod
+    def fetch_all(cls, connector: Connector) -> List["Inquilino"]:
+        """
+        Obtiene todos los arrendos de la tabla.
+        """
+        connector.set_table("inquilinos")
+        rows = connector.get_all()
+        return [cls.from_dict(row) for row in rows]
+
+    @classmethod
+    def fetch_by_inquilino(cls, connector: Connector, inq_id: int) -> List["Inquilino"]:
+        """
+        Obtiene solo los arrendos de un inquilino específico.
+        """
+        connector.set_table("inquilinos")
+        where = f"inq_id = {inq_id}"
+        rows = connector.get_filtered(where)
+        return [cls.from_dict(row) for row in rows]

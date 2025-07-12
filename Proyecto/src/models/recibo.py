@@ -6,13 +6,19 @@ Date: 2025-07-08
 """
 
 from datetime import date
-from typing import Optional
+from typing import Optional, List
 from decimal import Decimal
-from .enums import TipoServicio
+import sys
+
+sys.path.append("src")
+from connector.connector import Connector
+
+sys.path.append("src/models")
+from models.enums import TipoServicio
 
 
 class Recibo:
-    """    
+    """
     Attributes:
         id (int): ID único del recibo (auto-generado)
         fecha (date): Fecha del recibo
@@ -22,10 +28,16 @@ class Recibo:
         consumo_final (Decimal): Lectura final en el recibo
     """
 
-    def __init__(self, id: int = 0, fecha: Optional[date] = None,
-                 servicio: TipoServicio = TipoServicio.ACUEDUCTO_Y_ASEO, mes: str = "",
-                 consumo_inicial: float = 0.0, consumo_final: float = 0.0):
-        
+    def __init__(
+        self,
+        id: int = 0,
+        fecha: Optional[date] = None,
+        servicio: TipoServicio = TipoServicio.ACUEDUCTO_Y_ASEO,
+        mes: str = "",
+        consumo_inicial: float = 0.0,
+        consumo_final: float = 0.0,
+    ):
+
         self._id = id
         self._fecha = fecha
         self._servicio = servicio
@@ -115,30 +127,30 @@ class Recibo:
         Obj to dicc
         """
         return {
-            'reci_id': self.id,
-            'reci_fecha': self.fecha,
-            'reci_servicio': self.servicio.value,
-            'reci_mes': self.mes,
-            'reci_consumoInicial': float(self.consumo_inicial),
-            'reci_consumoFinal': float(self.consumo_final)
+            "reci_id": self.id,
+            "reci_fecha": self.fecha,
+            "reci_servicio": self.servicio.value,
+            "reci_mes": self.mes,
+            "reci_consumoInicial": float(self.consumo_inicial),
+            "reci_consumoFinal": float(self.consumo_final),
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> 'Recibo':
+    def from_dict(cls, data: dict) -> "Recibo":
         """
         Dicc to obj
         """
         servicio = TipoServicio.ACUEDUCTO_Y_ASEO
-        if data.get('reci_servicio'):
-            servicio = TipoServicio(data['reci_servicio'])
+        if data.get("reci_servicio"):
+            servicio = TipoServicio(data["reci_servicio"])
 
         return cls(
-            id=data.get('reci_id', 0),
-            fecha=data.get('reci_fecha'),
+            id=data.get("reci_id", 0),
+            fecha=data.get("reci_fecha"),
             servicio=servicio,
-            mes=data.get('reci_mes', ''),
-            consumo_inicial=float(data.get('reci_consumoInicial', 0)),
-            consumo_final=float(data.get('reci_consumoFinal', 0))
+            mes=data.get("reci_mes", ""),
+            consumo_inicial=float(data.get("reci_consumoInicial", 0)),
+            consumo_final=float(data.get("reci_consumoFinal", 0)),
         )
 
     def es_valido(self) -> bool:
@@ -146,10 +158,12 @@ class Recibo:
         Validación de datos.
         """
         try:
-            return (self.fecha is not None and
-                   len(self.mes.strip()) > 0 and
-                   self.consumo_inicial >= 0 and
-                   self.consumo_final >= self.consumo_inicial)
+            return (
+                self.fecha is not None
+                and len(self.mes.strip()) > 0
+                and self.consumo_inicial >= 0
+                and self.consumo_final >= self.consumo_inicial
+            )
         except:
             return False
 
@@ -164,3 +178,33 @@ class Recibo:
         if not isinstance(other, Recibo):
             return False
         return self.id == other.id
+
+    @classmethod
+    def fetch_all(cls, connector: Connector) -> List["Recibo"]:
+        """
+        Obtiene todos los arrendos de la tabla.
+        """
+        connector.set_table("recibos")
+        rows = connector.get_all()
+        return [cls.from_dict(row) for row in rows]
+
+    @classmethod
+    def fetch_by_inquilino(cls, connector: Connector, inq_id: int) -> List["Recibo"]:
+        """
+        Obtiene solo los arrendos de un inquilino específico.
+        """
+        connector.set_table("recibos")
+        where = f"""
+        reci_id IN (
+            SELECT corre_reci_id
+            FROM correspondencia
+            WHERE corre_apar_id IN (
+                SELECT arre_apar_id
+                FROM arrendos
+                WHERE arre_inq_id = {inq_id}
+            )
+        )
+    """
+
+        rows = connector.get_filtered(where)
+        return [cls.from_dict(row) for row in rows]

@@ -7,7 +7,12 @@ Date: 2025-07-08
 
 from datetime import date
 from typing import Optional
-from .enums import EstadoPago
+import sys
+sys.path.append('src')
+from connector.connector import Connector
+sys.path.append('src/models')
+from models.enums import EstadoPago
+from typing import List
 
 
 class Arrendo:
@@ -213,3 +218,22 @@ class Arrendo:
 
     def __repr__(self) -> str:
         return f"Arrendo({self.inquilino_id}, {self.apartamento_id}, '{self.mes}', {self.valor})"
+    
+    @classmethod
+    def fetch_all(cls, connector: Connector) -> List['Arrendo']:
+        """
+        Obtiene todos los arrendos de la tabla.
+        """
+        connector.set_table("arrendos")
+        rows = connector.get_all()
+        return [cls.from_dict(row) for row in rows]
+
+    @classmethod
+    def fetch_by_inquilino(cls, connector: Connector, inq_id: int) -> List['Arrendo']:
+        """
+        Obtiene solo los arrendos de un inquilino específico.
+        """
+        connector.set_table("arrendos")
+        where = f"arre_inq_id = {inq_id}"
+        rows = connector.get_filtered(where)
+        return [cls.from_dict(row) for row in rows]

@@ -4,8 +4,12 @@ Author: ahbordam
 Versión: 1.0.0
 Date: 2025-07-08
 """
-from typing import Optional
+import sys
+sys.path.append('src')
 from connector.connector import Connector
+sys.path.append('src/models')
+from typing import List
+from typing import Optional
 
 
 class Apartamento:
@@ -89,3 +93,21 @@ class Apartamento:
         if not isinstance(other, Apartamento):
             return False
         return self.id == other.id
+    
+    @classmethod
+    def fetch_all(cls, connector: Connector) -> List['Apartamento']:
+        """
+        Obtiene todos los apartamentos de la tabla.
+        """
+        connector.set_table("apartamentos")
+        rows = connector.get_all()
+        return [cls.from_dict(row) for row in rows]
+
+    @classmethod
+    def fetch_by_inquilino(cls, connector: Connector, inq_id: int) -> List['Apartamento']:
+        connector.set_table("apartamentos")
+        where = (
+            f"apar_id IN (SELECT arre_apar_id FROM arrendos WHERE arre_inq_id = {inq_id})"
+        )
+        rows = connector.get_filtered(where_clause=where)
+        return [cls.from_dict(row) for row in rows]
