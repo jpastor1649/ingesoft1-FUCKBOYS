@@ -1,5 +1,7 @@
 from typing import Optional, List, Dict, Any
 from datetime import datetime
+import sys
+sys.path.append('src')  # Ajusta el path según tu estructura de carpetas
 from connector.connector import Connector
 
 
@@ -58,6 +60,47 @@ class Recibo:
         where = f"reci_mes = '{mes.upper()}' ORDER BY reci_servicio"
         return self.connector.get_filtered(where)
     
+    # def obtener_por_apartamento(self, apar_id: int) -> List[Dict[str, Any]]:
+    #     """
+    #     Obtener recibos asociados a un apartamento específico usando correspondencia
+    #     """
+    #     # Guardar la tabla original
+    #     tabla_original = self.connector.table
+    #     # Buscar correspondencias para el apartamento
+    #     self.connector.set_table('correspondencia')
+    #     correspondencias = self.connector.get_filtered(f"corre_apar_id = {apar_id}")
+    #     self.connector.set_table(tabla_original)
+
+    #     reci_ids = [c['corre_reci_id'] for c in correspondencias]
+    #     if not reci_ids:
+    #         return []
+
+    #     # Buscar los recibos asociados a esos IDs
+    #     self.connector.set_table('recibos')
+    #     where = f"reci_id IN ({','.join(str(rid) for rid in reci_ids)}) ORDER BY reci_fecha DESC, reci_servicio"
+    #     return self.connector.get_filtered(where)
+
+    def obtener_por_apartamento(self, apar_id: int) -> List[Dict[str, Any]]:
+        """
+        Obtener recibos asociados a un apartamento específico usando correspondencia
+        """
+        tabla_original = self.connector.table
+        self.connector.set_table('correspondencia')
+        correspondencias = self.connector.get_filtered(f"corre_apar_id = {apar_id}")
+        self.connector.set_table(tabla_original)
+
+        reci_ids = [c['corre_reci_id'] for c in correspondencias]
+        print(f"[DEBUG] Recibos asociados al apartamento {apar_id}: {reci_ids}")  # <-- Debug
+
+        if not reci_ids:
+            return []
+
+        self.connector.set_table('recibos')
+        where = f"reci_id IN ({','.join(str(rid) for rid in reci_ids)}) ORDER BY reci_fecha DESC, reci_servicio"
+        resultados = self.connector.get_filtered(where)
+        print(f"[DEBUG] Resultados de recibos: {resultados}")  # <-- Debug
+        return resultados
+
     def obtener_por_servicio(self, servicio: str) -> List[Dict[str, Any]]:
         """
         Obtener recibos de un servicio específico

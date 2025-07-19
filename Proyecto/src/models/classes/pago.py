@@ -70,6 +70,7 @@ class Pago:
         return self.connector.get_filtered(where)
     
     def obtener_por_apartamento(self, apar_id: int) -> List[Dict[str, Any]]:
+        self.connector.set_table("pagos")
         """
         Obtener pagos de un apartamento específico
         """

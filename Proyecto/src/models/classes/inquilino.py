@@ -44,6 +44,17 @@ class Inquilino:
         """
         return self.connector.get_all()
     
+    def obtener_por_inquilino(self, inq_id: int) -> Optional[Dict[str, Any]]:
+        """
+        Obtener un inquilino por su ID
+        
+        Args:
+            inq_id (int): ID del inquilino a buscar
+        """
+        where = f"inq_id = {inq_id}"
+        results = self.connector.get_filtered(where)
+        return results[0] if results else None
+    
     def actualizar(self, inq_id: int, nombre: str, edad: int) -> bool:
         """
         Actualizar datos de un inquilino

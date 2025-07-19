@@ -1,4 +1,6 @@
 from typing import Dict, Any, List
+import sys
+sys.path.append("src")
 from connector.connector import Connector
 
 
@@ -121,8 +123,12 @@ class GeneradorReportes:
             lineas.append(f"Apartamento: {reporte['apartamento_id']}")
             lineas.append(f"Arriendo: ${reporte['arriendo']:,}")
             lineas.append("Servicios:")
-            for servicio, valor in reporte.get('servicios', {}).items():
-                lineas.append(f"  {servicio}: ${valor:,}")
+            servicios = reporte.get('servicios', {})
+            if servicios:
+                for servicio, valor in servicios.items():
+                    lineas.append(f"  {servicio}: ${valor:,}")
+            else:
+                lineas.append("  (Sin servicios registrados)")
             lineas.append(f"Total: ${reporte['total_general']:,}")
         
         # Si es reporte de recaudación

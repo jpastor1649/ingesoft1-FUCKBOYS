@@ -49,6 +49,7 @@ class ServicioAcueducto:
         """
         Obtener detalle de acueducto por ID de recibo
         """
+        self.connector.set_table('acueducto')
         where = f"acue_reci_id = {reci_id}"
         results = self.connector.get_filtered(where)
         return results[0] if results else None
@@ -57,6 +58,7 @@ class ServicioAcueducto:
         """
         Obtener todos los detalles de acueducto
         """
+        self.connector.set_table('acueducto')
         return self.connector.get_all()
     
     def actualizar(self, reci_id: int, piso: int, consumo: float,

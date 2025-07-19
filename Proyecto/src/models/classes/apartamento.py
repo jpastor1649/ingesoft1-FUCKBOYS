@@ -53,6 +53,16 @@ class Apartamento:
         """
         return self.connector.get_all()
     
+    def obtener_por_inquilino(self, inq_id: int) -> List[Dict[str, Any]]:
+        """
+        Obtener apartamentos por ID de inquilino
+        
+        Args:
+            inq_id (int): ID del inquilino
+        """
+        where = f"apar_id IN (SELECT arre_apar_id FROM arrendos WHERE arre_inq_id = {inq_id})"
+        return self.connector.get_filtered(where)
+    
     def actualizar(self, apar_id: int, cantidad_personas: int, observaciones: str = "") -> bool:
         """
         Actualizar datos de un apartamento existente

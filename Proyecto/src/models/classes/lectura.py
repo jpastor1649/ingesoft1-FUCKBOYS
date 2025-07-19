@@ -55,6 +55,7 @@ class Lectura:
         return results[0] if results else None
     
     def obtener_todas(self) -> List[Dict[str, Any]]:
+        self.connector.set_table('lecturas')
         """
         Obtener todas las lecturas
         """
@@ -62,12 +63,13 @@ class Lectura:
         return self.connector.get_filtered(where)
     
     def obtener_por_apartamento(self, apar_id: int) -> List[Dict[str, Any]]:
+        self.connector.set_table('lecturas')
         """
         Obtener lecturas de un apartamento específico
         """
         where = f"lec_apar_id = {apar_id} ORDER BY lec_fecha DESC, lec_servicio"
         return self.connector.get_filtered(where)
-    
+
     def obtener_por_mes(self, mes: str) -> List[Dict[str, Any]]:
         """
         Obtener lecturas de un mes específico

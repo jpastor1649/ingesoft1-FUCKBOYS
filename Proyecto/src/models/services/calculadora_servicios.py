@@ -81,7 +81,7 @@ class CalculadoraRecibos:
             }
         }
     
-    def calcular_factor_consumo_apartamento(self, apar_id: int, mes: str, servicio: str) -> float:
+    def _calcular_factor_consumo_apartamento(self, apar_id: int, mes: str, servicio: str) -> float:
         """
         Calcular factor de distribución de un apartamento basado en su consumo
         """
@@ -119,24 +119,21 @@ class CalculadoraRecibos:
             if not detalle:
                 return 0.0
             calculo = self.servicio_acueducto.calcular_valor_total(reci_id)
-            
         elif servicio == 'ENERGIA':
             detalle = self.servicio_energia.obtener_por_recibo(reci_id)
             if not detalle:
                 return 0.0
             calculo = self.servicio_energia.calcular_valor_total(reci_id)
-            
         elif servicio == 'GAS NATURAL':
             detalle = self.servicio_gas.obtener_por_recibo(reci_id)
             if not detalle:
                 return 0.0
             calculo = self.servicio_gas.calcular_valor_total(reci_id)
-            
         else:
             return 0.0
         
         # Calcular factor de distribución para este apartamento
-        factor = self.calcular_factor_consumo_apartamento(apar_id, mes, servicio)
+        factor = self._calcular_factor_consumo_apartamento(apar_id, mes, servicio)
         
         # Calcular valor proporcional
         valor_total = calculo.get('valor_total', 0)

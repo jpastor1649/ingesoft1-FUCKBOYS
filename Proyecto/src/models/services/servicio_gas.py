@@ -35,6 +35,7 @@ class ServicioGas:
         return affected > 0
     
     def obtener_por_recibo(self, reci_id: int) -> Optional[Dict[str, Any]]:
+        self.connector.set_table('gas')
         """
         Obtener detalle de gas por ID de recibo
         """
@@ -43,6 +44,7 @@ class ServicioGas:
         return results[0] if results else None
     
     def obtener_todos(self) -> List[Dict[str, Any]]:
+        self.connector.set_table('gas')
         """
         Obtener todos los detalles de gas
         """

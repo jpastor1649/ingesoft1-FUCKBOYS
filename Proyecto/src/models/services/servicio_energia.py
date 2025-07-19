@@ -40,11 +40,13 @@ class ServicioEnergia:
         """
         Obtener detalle de energía por ID de recibo
         """
+        self.connector.set_table('energia')
         where = f"ener_reci_id = {reci_id}"
         results = self.connector.get_filtered(where)
         return results[0] if results else None
     
     def obtener_todos(self) -> List[Dict[str, Any]]:
+        self.connector.set_table('energia')
         """
         Obtener todos los detalles de energía
         """

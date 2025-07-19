@@ -7,7 +7,6 @@
 
 """This module provides runtime support for type hints"""
 from typing import Any
-
 import mysql.connector
 from mysql.connector.errors import Error
 
