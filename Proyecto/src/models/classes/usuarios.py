@@ -10,6 +10,7 @@ from classes.inquilino import Inquilino
 from classes.lectura import Lectura
 from classes.recibo import Recibo
 from classes.pago import Pago
+
 sys.path.append("src")
 from managers.gestor_apartamentos import GestorApartamentos
 from managers.gestor_pagos import GestorPagos
@@ -69,7 +70,9 @@ class Usuario:
 
         # Filtrar por mes si es necesario
         if mes:
-            resultados = [a for a in resultados if a.get("arre_mes", "").upper() == mes.upper()]
+            resultados = [
+                a for a in resultados if a.get("arre_mes", "").upper() == mes.upper()
+            ]
 
         return resultados
 
@@ -88,6 +91,7 @@ class Usuario:
             if self.es_admin()
             else [inquilino.obtener_por_inquilino(self.id_usuario)]
         )
+
     def obtener_lecturas(self, mes: str = None, apar_id: int = None) -> list[dict]:
         lecturas = Lectura(self.db)
 
@@ -107,7 +111,11 @@ class Usuario:
 
         # Filtrar por mes si es necesario
         if mes:
-            resultados = [lec for lec in resultados if lec.get("lec_mes", "").upper() == mes.upper()]
+            resultados = [
+                lec
+                for lec in resultados
+                if lec.get("lec_mes", "").upper() == mes.upper()
+            ]
 
         return resultados
 
@@ -130,10 +138,12 @@ class Usuario:
 
         # Filtrar por mes si es necesario
         if mes:
-            resultados = [r for r in resultados if r.get("reci_mes", "").upper() == mes.upper()]
+            resultados = [
+                r for r in resultados if r.get("reci_mes", "").upper() == mes.upper()
+            ]
 
         return resultados
-    
+
     def obtener_pagos(self, mes: str = None, apar_id: int = None) -> list[dict]:
         pagos = Pago(self.db)
         resultados = []
@@ -153,25 +163,29 @@ class Usuario:
 
         # Filtrar por mes si es necesario
         if mes:
-            resultados = [p for p in resultados if p.get("pago_mes", "").upper() == mes.upper()]
+            resultados = [
+                p for p in resultados if p.get("pago_mes", "").upper() == mes.upper()
+            ]
 
         if len(resultados) == 0:
             print("No hay pagos registrados")
         return resultados
-    
-    #SERVICIOS
+
+    # SERVICIOS
     def calcular_recibo_apartamento_mes(self, apar_id: int, mes: str) -> dict:
-            """
-            Calcula el recibo total de un apartamento para un mes específico.
-            Admin: cualquier apartamento.
-            Inquilino: solo sus apartamentos.
-            """
-            if not self.es_admin():
-                ids_apartamentos = [apto["apar_id"] for apto in self.obtener_apartamentos()]
-                if apar_id not in ids_apartamentos:
-                    raise PermissionError("No puedes ver recibos de apartamentos que no te pertenecen.")
-            calculadora = CalculadoraRecibos(self.db)
-            return calculadora.calcular_recibo_apartamento_mes(apar_id, mes)
+        """
+        Calcula el recibo total de un apartamento para un mes específico.
+        Admin: cualquier apartamento.
+        Inquilino: solo sus apartamentos.
+        """
+        if not self.es_admin():
+            ids_apartamentos = [apto["apar_id"] for apto in self.obtener_apartamentos()]
+            if apar_id not in ids_apartamentos:
+                raise PermissionError(
+                    "No puedes ver recibos de apartamentos que no te pertenecen."
+                )
+        calculadora = CalculadoraRecibos(self.db)
+        return calculadora.calcular_recibo_apartamento_mes(apar_id, mes)
 
     def calcular_recibos_mes_usuario(self, mes: str) -> dict:
         """
@@ -190,20 +204,24 @@ class Usuario:
                 recibo = calculadora.calcular_recibo_apartamento_mes(apar_id, mes)
                 distribucion[apar_id] = recibo
             # Calcular totales generales para el usuario
-            total_arrendos = sum(r.get('total_arriendo', 0) for r in distribucion.values())
-            total_servicios = sum(r.get('total_servicios', 0) for r in distribucion.values())
+            total_arrendos = sum(
+                r.get("total_arriendo", 0) for r in distribucion.values()
+            )
+            total_servicios = sum(
+                r.get("total_servicios", 0) for r in distribucion.values()
+            )
             return {
-                'mes': mes,
-                'apartamentos': distribucion,
-                'totales': {
-                    'total_apartamentos': len(apartamentos),
-                    'total_arrendos': total_arrendos,
-                    'total_servicios': total_servicios,
-                    'total_general': total_arrendos + total_servicios
-                }
+                "mes": mes,
+                "apartamentos": distribucion,
+                "totales": {
+                    "total_apartamentos": len(apartamentos),
+                    "total_arrendos": total_arrendos,
+                    "total_servicios": total_servicios,
+                    "total_general": total_arrendos + total_servicios,
+                },
             }
-    
-    #GESTORES
+
+    # GESTORES
     def generar_reporte_mes(self, mes: str) -> dict:
         """
         Genera un reporte básico de un mes.
@@ -247,7 +265,9 @@ class Usuario:
         else:
             ids_apartamentos = [apto["apar_id"] for apto in self.obtener_apartamentos()]
             if apar_id not in ids_apartamentos:
-                raise PermissionError("No puedes ver reportes de apartamentos que no te pertenecen.")
+                raise PermissionError(
+                    "No puedes ver reportes de apartamentos que no te pertenecen."
+                )
             return generador.generar_reporte_apartamento(apar_id, mes)
 
     def generar_reporte_recaudacion(self, mes: str) -> dict:
@@ -272,7 +292,9 @@ class Usuario:
                 total_arriendos += arriendo
                 # Verifica si el arriendo está pagado
                 self.db.set_table("arrendos")
-                arr = self.db.get_filtered(f"arre_apar_id = {apar_id} AND arre_mes = '{mes.upper()}'")
+                arr = self.db.get_filtered(
+                    f"arre_apar_id = {apar_id} AND arre_mes = '{mes.upper()}'"
+                )
                 if arr and arr[0].get("arre_estado") == "CANCELADO":
                     arrendos_pagados += arriendo
                 servicios = rep.get("servicios", {})
@@ -300,7 +322,8 @@ class Usuario:
                 },
                 "total_esperado": total_arriendos + total_servicios,
                 "total_recaudado": arrendos_pagados + servicios_pagados,
-                "total_pendiente": (total_arriendos - arrendos_pagados) + (total_servicios - servicios_pagados),
+                "total_pendiente": (total_arriendos - arrendos_pagados)
+                + (total_servicios - servicios_pagados),
             }
 
     def exportar_reporte_texto(self, reporte: dict) -> str:
@@ -314,8 +337,7 @@ class Usuario:
             raise PermissionError("Solo el administrador puede ver el resumen general.")
         generador = GeneradorReportes(self.db)
         return generador.obtener_resumen_general()
-    
-    
+
     def seleccionar_usuario(connector: Connector) -> "Usuario | None":
         print("=== Login ===")
         rol = input("Rol (admin o inquilino): ").strip().lower()

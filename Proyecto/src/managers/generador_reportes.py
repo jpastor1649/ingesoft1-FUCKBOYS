@@ -102,7 +102,7 @@ class GeneradorReportes:
             'total_recaudado': arrendos_pagados + servicios_pagados,
             'total_pendiente': (total_arrendos - arrendos_pagados) + (total_servicios - servicios_pagados)
         }
-    
+
     def exportar_reporte_texto(self, reporte: Dict[str, Any]) -> str:
         """
         Exportar reporte en formato texto

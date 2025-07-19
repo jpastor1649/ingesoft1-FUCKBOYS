@@ -32,7 +32,7 @@ class ServicioAcueducto:
             print(f"❌ No existe recibo con ID {reci_id}")
             return False
             
-        if self.obtener_por_recibo(reci_id):
+        if self._obtener_por_recibo(reci_id):
             print(f"❌ Ya existe detalle de acueducto para el recibo {reci_id}")
             return False
             
@@ -45,7 +45,7 @@ class ServicioAcueducto:
         affected = self.connector.insert(fields, values)
         return affected > 0
     
-    def obtener_por_recibo(self, reci_id: int) -> Optional[Dict[str, Any]]:
+    def _obtener_por_recibo(self, reci_id: int) -> Optional[Dict[str, Any]]:
         """
         Obtener detalle de acueducto por ID de recibo
         """
@@ -54,7 +54,7 @@ class ServicioAcueducto:
         results = self.connector.get_filtered(where)
         return results[0] if results else None
     
-    def obtener_todos(self) -> List[Dict[str, Any]]:
+    def _obtener_todos(self) -> List[Dict[str, Any]]:
         """
         Obtener todos los detalles de acueducto
         """
@@ -72,7 +72,7 @@ class ServicioAcueducto:
                                   cargo_fijo_alcantarillado, tarifa_alcantarillado, descuento):
             return False
             
-        if not self.obtener_por_recibo(reci_id):
+        if not self._obtener_por_recibo(reci_id):
             print(f"❌ No existe detalle de acueducto para el recibo {reci_id}")
             return False
             
@@ -89,7 +89,7 @@ class ServicioAcueducto:
         """
         Eliminar detalle de acueducto
         """
-        if not self.obtener_por_recibo(reci_id):
+        if not self._obtener_por_recibo(reci_id):
             print(f"❌ No existe detalle de acueducto para el recibo {reci_id}")
             return False
             
@@ -98,11 +98,11 @@ class ServicioAcueducto:
         affected = self.connector._execute(sql)
         return affected > 0
     
-    def calcular_valor_acueducto(self, reci_id: int) -> float:
+    def _calcular_valor_acueducto(self, reci_id: int) -> float:
         """
         Calcular valor total de acueducto
         """
-        detalle = self.obtener_por_recibo(reci_id)
+        detalle = self._obtener_por_recibo(reci_id)
         if not detalle:
             return 0.0
             
@@ -113,11 +113,11 @@ class ServicioAcueducto:
         valor_acueducto = cargo_fijo + (consumo * tarifa)
         return round(valor_acueducto, 2)
     
-    def calcular_valor_alcantarillado(self, reci_id: int) -> float:
+    def _calcular_valor_alcantarillado(self, reci_id: int) -> float:
         """
         Calcular valor total de alcantarillado
         """
-        detalle = self.obtener_por_recibo(reci_id)
+        detalle = self._obtener_por_recibo(reci_id)
         if not detalle:
             return 0.0
             
@@ -132,7 +132,7 @@ class ServicioAcueducto:
         """
         Calcular valor total del servicio de acueducto y aseo
         """
-        detalle = self.obtener_por_recibo(reci_id)
+        detalle = self._obtener_por_recibo(reci_id)
         if not detalle:
             return {
                 'valor_acueducto': 0.0,
@@ -143,8 +143,8 @@ class ServicioAcueducto:
                 'valor_total': 0.0
             }
             
-        valor_acueducto = self.calcular_valor_acueducto(reci_id)
-        valor_alcantarillado = self.calcular_valor_alcantarillado(reci_id)
+        valor_acueducto = self._calcular_valor_acueducto(reci_id)
+        valor_alcantarillado = self._calcular_valor_alcantarillado(reci_id)
         subtotal = valor_acueducto + valor_alcantarillado
         
         descuento_porcentaje = int(detalle['acue_descuento'])
@@ -195,7 +195,7 @@ class ServicioAcueducto:
         """
         return self.connector._fetch(sql.replace('%s', str(limit)))
     
-    def obtener_promedio_consumo_mensual(self) -> float:
+    def _obtener_promedio_consumo_mensual(self) -> float:
         """
         Obtener promedio de consumo mensual
         """
@@ -210,7 +210,7 @@ class ServicioAcueducto:
         """
         Obtener estadísticas de tarifas de acueducto
         """
-        detalles = self.obtener_todos()
+        detalles = self._obtener_todos()
         
         if not detalles:
             return {
@@ -237,7 +237,7 @@ class ServicioAcueducto:
             'descuento_promedio': round(sum(descuentos) / len(descuentos), 2),
             'tarifa_acueducto_maxima': max(tarifas_acueducto),
             'tarifa_acueducto_minima': min(tarifas_acueducto),
-            'consumo_promedio': self.obtener_promedio_consumo_mensual()
+            'consumo_promedio': self._obtener_promedio_consumo_mensual()
         }
     
     def _validar_datos(self, piso: int, consumo: float, cargo_fijo_acueducto: float,
