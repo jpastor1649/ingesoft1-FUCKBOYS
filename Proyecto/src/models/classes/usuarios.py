@@ -40,20 +40,7 @@ class Usuario:
     def es_admin(self) -> bool:
         return self.rol.lower() == "admin"
 
-    def cargar_datos(self, db: Connector) -> None:
-        """Carga el nombre y rol del usuario desde la base de datos."""
-        try:
-            db.set_table("inquilinos")
-            resultados = db.get_filtered(f"inq_id = {self.id_usuario}")
-            if resultados:
-                usuario_db = resultados[0]
-                self.name = usuario_db.get("inq_nombre", self.name)
-                if not self.rol:
-                    self.rol = usuario_db.get("rol", self.rol)
-                self.edad = usuario_db.get("inq_edad", self.edad)
-        except Exception as e:
-            print(f"⚠️ Error al cargar datos del usuario: {e}")
-
+    # CRUD ARRIENDOS
     def obtener_arriendos(self, mes: str = None, apar_id: int = None) -> list[dict]:
         arriendos = Arriendo(self.db)
         resultados = []
@@ -76,6 +63,84 @@ class Usuario:
 
         return resultados
 
+    def crear_arriendo(
+        self,
+        inq_id: int,
+        apar_id: int,
+        mes: str,
+        valor: float,
+        fecha_inicio: str,
+        fecha_fin: str,
+        estado: str = "PENDIENTE",
+        fecha_pago: str = None,
+        observaciones: str = "",
+    ) -> bool:
+        """
+        Crea un arriendo para un apartamento dado y un inquilino específico,
+        si el usuario es administrador.
+        """
+        if not self.es_admin():
+            raise PermissionError("Solo los administradores pueden crear arriendos.")
+
+        arriendo = Arriendo(self.db)
+        return arriendo.crear(
+            inq_id=inq_id,
+            apar_id=apar_id,
+            fecha_inicio=fecha_inicio,
+            fecha_fin=fecha_fin,
+            mes=mes,
+            valor=int(valor),
+            estado=estado,
+            fecha_pago=fecha_pago,
+            observaciones=observaciones,
+        )
+
+    def actualizar_valor_arriendo(
+        self, fecha_inicio: str, apar_id: int, inq_id: int, nuevo_valor: int
+    ) -> bool:
+        if not self.es_admin():
+            raise PermissionError(
+                "Solo los administradores pueden actualizar valores de arriendo."
+            )
+
+        arriendo = Arriendo(self.db)
+        return arriendo.actualizar_valor(fecha_inicio, apar_id, inq_id, nuevo_valor)
+
+    def actualizar_estado_arriendo(
+        self,
+        fecha_inicio: str,
+        apar_id: int,
+        inq_id: int,
+        nuevo_estado: str,
+        fecha_pago: str = None,
+    ) -> bool:
+        if not self.es_admin():
+            raise PermissionError(
+                "Solo los administradores pueden actualizar estados de arriendos."
+            )
+
+        arriendo = Arriendo(self.db)
+        return arriendo.actualizar_estado(
+            fecha_inicio, apar_id, inq_id, nuevo_estado, fecha_pago
+        )
+
+    def registrar_pago_arriendo(
+        self, fecha_inicio: str, apar_id: int, inq_id: int, fecha_pago: str
+    ) -> bool:
+        if not self.es_admin():
+            raise PermissionError("Solo los administradores pueden registrar pagos.")
+
+        arriendo = Arriendo(self.db)
+        return arriendo.registrar_pago(fecha_inicio, apar_id, inq_id, fecha_pago)
+
+    def cerrar_arriendo(self, fecha_inicio: str, apar_id: int, inq_id: int) -> bool:
+        if not self.es_admin():
+            raise PermissionError("Solo los administradores pueden cerrar arriendos.")
+
+        arriendo = Arriendo(self.db)
+        return arriendo.cerrar_arriendo(fecha_inicio, apar_id, inq_id)
+
+    # CRUD APARTAMENTOS
     def obtener_apartamentos(self) -> list[dict]:
         apartamentos = Apartamento(self.db)
         return (
@@ -83,6 +148,34 @@ class Usuario:
             if self.es_admin()
             else apartamentos.obtener_por_inquilino(self.id_usuario)
         )
+
+    def crear_apartamento(
+        self, apar_id: int, cantidad_personas: int, observaciones: str = ""
+    ):
+        if not self.es_admin():
+            raise PermissionError("Solo los administradores pueden crear apartamentos.")
+        apt = Apartamento(self.db)
+        return apt.crear(apar_id, cantidad_personas, observaciones)
+
+    def actualizar_apartamento(
+        self, apar_id: int, cantidad_personas: int, observaciones: str = ""
+    ):
+        if not self.es_admin():
+            raise PermissionError(
+                "Solo los administradores pueden actualizar apartamentos."
+            )
+        apt = Apartamento(self.db)
+        return apt.actualizar(apar_id, cantidad_personas, observaciones)
+
+    def eliminar_apartamento(self, apar_id: int):
+        if not self.es_admin():
+            raise PermissionError(
+                "Solo los administradores pueden eliminar apartamentos."
+            )
+        apt = Apartamento(self.db)
+        return apt.eliminar(apar_id)
+
+    # CRUD INQUILINOS
 
     def obtener_inquilinos(self) -> list[dict]:
         inquilino = Inquilino(self.db)
@@ -92,6 +185,13 @@ class Usuario:
             else [inquilino.obtener_por_inquilino(self.id_usuario)]
         )
 
+    def crear_inquilino(self, inq_id: int, nombre: str, edad: int) -> bool:
+        if not self.es_admin():
+            raise PermissionError("Solo los administradores pueden crear inquilinos.")
+        inquilino = Inquilino(self.db)
+        return inquilino.crear(inq_id, nombre, edad)
+    
+    #CRUD NOT IMPLEMENTED YET
     def obtener_lecturas(self, mes: str = None, apar_id: int = None) -> list[dict]:
         lecturas = Lectura(self.db)
 
@@ -355,3 +455,17 @@ class Usuario:
             id_usuario = 0
 
         return Usuario(id_usuario=id_usuario, rol=rol, connector=connector)
+
+    def cargar_datos(self, db: Connector) -> None:
+        """Carga el nombre y rol del usuario desde la base de datos."""
+        try:
+            db.set_table("inquilinos")
+            resultados = db.get_filtered(f"inq_id = {self.id_usuario}")
+            if resultados:
+                usuario_db = resultados[0]
+                self.name = usuario_db.get("inq_nombre", self.name)
+                if not self.rol:
+                    self.rol = usuario_db.get("rol", self.rol)
+                self.edad = usuario_db.get("inq_edad", self.edad)
+        except Exception as e:
+            print(f"⚠️ Error al cargar datos del usuario: {e}")
