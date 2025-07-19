@@ -2,32 +2,34 @@ import subprocess
 import os
 import mysql.connector
 
+
 class DataBaseManager:
+    """Clase para gestionar la creación y verificación de la base de datos."""
+
     def __init__(self):
         """
         Clase para gestionar la creación y verificación de la base de datos.
         """
-        self.DB_NAME = "apartamentos"
-        self.DB_USER = "root"
-        self.DB_PASSWORD = "proyecto123"
-        self.SCRIPT_DIR = "src/db/SQL"
-        self.SCRIPTS = [
+        self.db_name = "apartamentos"
+        self.db_user = "root"
+        self.db_password = "proyecto123"
+        self.script_dir = "src/db/SQL"
+        self.scripts = [
             "script CREATE DATABASE.sql",
             "script STACK_PROCEDURES.sql",
             "script TRIGGERS.sql",
-            "script DATA INSERTION.sql"
+            "script DATA INSERTION.sql",
         ]
-        self.MYSQL_CMD = r"C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe" 
+        self.mysql_cmd = r"C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe"
 
     def verificar_db_existe(self):
+        """Verifica si la base de datos ya existe"""
         try:
             conn = mysql.connector.connect(
-                host="localhost",
-                user=self.DB_USER,
-                password=self.DB_PASSWORD
+                host="localhost", user=self.db_user, password=self.db_password
             )
             cursor = conn.cursor()
-            cursor.execute("SHOW DATABASES LIKE %s", (self.DB_NAME,))
+            cursor.execute("SHOW DATABASES LIKE %s", (self.db_name,))
             resultado = cursor.fetchone()
             cursor.close()
             conn.close()
@@ -37,37 +39,46 @@ class DataBaseManager:
             return False
 
     def crear_base_de_datos(self):
+        """Crea la base de datos y ejecuta los scripts necesarios."""
         print("🛠 Creando base de datos...")
         try:
-            subprocess.run([
-                self.MYSQL_CMD,
-                f"-u{self.DB_USER}",
-                f"-p{self.DB_PASSWORD}",
-                "-e", f"CREATE DATABASE IF NOT EXISTS {self.DB_NAME};"
-            ], check=True)
-            print(f"✅ Base de datos '{self.DB_NAME}' lista.")
+            subprocess.run(
+                [
+                    self.mysql_cmd,
+                    f"-u{self.db_user}",
+                    f"-p{self.db_password}",
+                    "-e",
+                    f"CREATE DATABASE IF NOT EXISTS {self.db_name};",
+                ],
+                check=True,
+            )
+            print(f"✅ Base de datos '{self.db_name}' lista.")
         except subprocess.CalledProcessError as e:
             print(f"❌ Error creando base: {e}")
 
     def ejecutar_scripts(self):
-        for script_name in self.SCRIPTS:
-            script_path = os.path.join(self.SCRIPT_DIR, script_name)
+        """Ejecuta los scripts SQL necesarios para inicializar la base de datos."""
+        for script_name in self.scripts:
+            script_path = os.path.join(self.script_dir, script_name)
             print(f"📄 Ejecutando: {script_path}")
             try:
-                subprocess.run([
-                    self.MYSQL_CMD,
-                    f"-u{self.DB_USER}",
-                    f"-p{self.DB_PASSWORD}",
-                    self.DB_NAME,
-                    "-e", f"source {script_path}"
-                ], check=True)
+                subprocess.run(
+                    [
+                        self.mysql_cmd,
+                        f"-u{self.db_user}",
+                        f"-p{self.db_password}",
+                        self.db_name,
+                        "-e",
+                        f"source {script_path}",
+                    ],
+                    check=True,
+                )
                 print(f"✅ Ejecutado: {script_name}")
             except subprocess.CalledProcessError as e:
                 print(f"❌ Error en {script_name}: {e}")
 
     def check(self):
-        """        Verifica si la base de datos existe, si no, la crea y ejecuta los scripts necesarios.
-        """
+        """Verifica si la base de datos existe, si no, la crea y ejecuta los scripts necesarios."""
         db_manager = DataBaseManager()
         if not db_manager.verificar_db_existe():
             db_manager.crear_base_de_datos()

@@ -1,14 +1,14 @@
 """
-    Author: Jpastor
-    Version: 1.0.0
-    License: MIT License
-    Date: 2025-07-04
+Author: Jpastor
+Version: 1.0.0
+License: MIT License
+Date: 2025-07-04
 """
 
-"""This module provides runtime support for type hints"""
 from typing import Any
 import mysql.connector
 from mysql.connector.errors import Error
+
 
 class Connector:
     """
@@ -120,7 +120,7 @@ class Connector:
         return self._fetch(sql)
 
     def _execute(self, sql: str, params: tuple[Any, ...] | None = None) -> int:
-        """ Execute a SQL command that modifies the database (INSERT, UPDATE, DELETE).
+        """Execute a SQL command that modifies the database (INSERT, UPDATE, DELETE).
 
         Args:
             sql (str): SQL command to execute.
@@ -147,7 +147,7 @@ class Connector:
             return 0
 
     def _fetch(self, sql: str) -> list[Any]:
-        """ Fetch records from the database based on a SQL query.
+        """Fetch records from the database based on a SQL query.
 
         Args:
             sql (str): SQL query to execute.

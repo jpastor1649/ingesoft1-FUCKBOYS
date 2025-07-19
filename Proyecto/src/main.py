@@ -1,11 +1,18 @@
+# pylint: disable=broad-exception-caught
+# pylint: disable=line-too-long
+
+"""Main application entry point for managing apartments and rentals."""
+
 import sys
 
 sys.path.append("src")
+
 from connector.connector import Connector
 from models.classes.usuarios import Usuario
 
 
 def pedir_filtros():
+    """Solicita al usuario filtros para las consultas de arriendos, lecturas, recibos y pagos."""
     mes = input("¿Filtrar por mes? (deje vacío para no filtrar): ").strip().upper()
     mes = mes if mes else None
     apar_id = input("¿Filtrar por apartamento? (deje vacío para no filtrar): ").strip()
@@ -14,6 +21,8 @@ def pedir_filtros():
 
 
 def menu_apartamentos(usuario):
+    """Muestra el menú de opciones para gestionar apartamentos."""
+
     if usuario:
         while True:
             print("\n=== Menú de Apartamentos ===")
@@ -88,6 +97,7 @@ def menu_apartamentos(usuario):
 
 
 def menu_arriendos(usuario):
+    """Muestra el menú de opciones para gestionar arriendos."""
     if usuario:
         while True:
             print("\n=== Menú de Arriendos ===")
@@ -253,7 +263,10 @@ def menu_arriendos(usuario):
             else:
                 print("Opción no válida. Intente de nuevo.")
 
+
 def main():
+    """Punto de entrada principal para la aplicación de gestión de apartamentos y arriendos."""
+    print("Bienvenido al sistema de gestión de apartamentos y arriendos.")
     db = Connector()
     db.connect()
 

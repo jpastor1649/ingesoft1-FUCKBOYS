@@ -1,3 +1,4 @@
+# pylint: disable=broad-exception-caught
 import sys
 
 sys.path.append("src")
@@ -21,6 +22,8 @@ from models.services.calculadora_servicios import CalculadoraRecibos
 
 
 class Usuario:
+    """Clase base para usuarios del sistema de apartamentos."""
+
     def __init__(
         self,
         id_usuario: int,
@@ -98,6 +101,7 @@ class Usuario:
     def actualizar_valor_arriendo(
         self, fecha_inicio: str, apar_id: int, inq_id: int, nuevo_valor: int
     ) -> bool:
+        """Actualiza el valor de un arriendo existente."""
         if not self.es_admin():
             raise PermissionError(
                 "Solo los administradores pueden actualizar valores de arriendo."
@@ -114,6 +118,7 @@ class Usuario:
         nuevo_estado: str,
         fecha_pago: str = None,
     ) -> bool:
+        """Actualiza el estado de un arriendo existente."""
         if not self.es_admin():
             raise PermissionError(
                 "Solo los administradores pueden actualizar estados de arriendos."
@@ -127,6 +132,7 @@ class Usuario:
     def registrar_pago_arriendo(
         self, fecha_inicio: str, apar_id: int, inq_id: int, fecha_pago: str
     ) -> bool:
+        """Registra el pago de un arriendo existente."""
         if not self.es_admin():
             raise PermissionError("Solo los administradores pueden registrar pagos.")
 
@@ -134,6 +140,7 @@ class Usuario:
         return arriendo.registrar_pago(fecha_inicio, apar_id, inq_id, fecha_pago)
 
     def cerrar_arriendo(self, fecha_inicio: str, apar_id: int, inq_id: int) -> bool:
+        """Cierra un arriendo existente."""
         if not self.es_admin():
             raise PermissionError("Solo los administradores pueden cerrar arriendos.")
 
@@ -142,6 +149,7 @@ class Usuario:
 
     # CRUD APARTAMENTOS
     def obtener_apartamentos(self) -> list[dict]:
+        """Obtiene la lista de apartamentos del usuario."""
         apartamentos = Apartamento(self.db)
         return (
             apartamentos.obtener_todos()
@@ -152,6 +160,7 @@ class Usuario:
     def crear_apartamento(
         self, apar_id: int, cantidad_personas: int, observaciones: str = ""
     ):
+        """Crea un nuevo apartamento si el usuario es administrador."""
         if not self.es_admin():
             raise PermissionError("Solo los administradores pueden crear apartamentos.")
         apt = Apartamento(self.db)
@@ -160,6 +169,7 @@ class Usuario:
     def actualizar_apartamento(
         self, apar_id: int, cantidad_personas: int, observaciones: str = ""
     ):
+        """Actualiza un apartamento existente si el usuario es administrador."""
         if not self.es_admin():
             raise PermissionError(
                 "Solo los administradores pueden actualizar apartamentos."
@@ -168,6 +178,7 @@ class Usuario:
         return apt.actualizar(apar_id, cantidad_personas, observaciones)
 
     def eliminar_apartamento(self, apar_id: int):
+        """Elimina un apartamento existente si el usuario es administrador."""
         if not self.es_admin():
             raise PermissionError(
                 "Solo los administradores pueden eliminar apartamentos."
@@ -178,6 +189,7 @@ class Usuario:
     # CRUD INQUILINOS
 
     def obtener_inquilinos(self) -> list[dict]:
+        """Obtiene la lista de inquilinos del usuario."""
         inquilino = Inquilino(self.db)
         return (
             inquilino.obtener_todos()
@@ -186,13 +198,15 @@ class Usuario:
         )
 
     def crear_inquilino(self, inq_id: int, nombre: str, edad: int) -> bool:
+        """Crea un nuevo inquilino si el usuario es administrador."""
         if not self.es_admin():
             raise PermissionError("Solo los administradores pueden crear inquilinos.")
         inquilino = Inquilino(self.db)
         return inquilino.crear(inq_id, nombre, edad)
-    
-    #CRUD NOT IMPLEMENTED YET
+
+    # CRUD NOT IMPLEMENTED YET
     def obtener_lecturas(self, mes: str = None, apar_id: int = None) -> list[dict]:
+        """Obtiene las lecturas de servicios de los apartamentos."""
         lecturas = Lectura(self.db)
 
         if self.es_admin():
@@ -220,6 +234,7 @@ class Usuario:
         return resultados
 
     def obtener_recibos(self, mes: str = None, apar_id: int = None) -> list[dict]:
+        """Obtiene los recibos de servicios de los apartamentos."""
         recibos = Recibo(self.db)
         resultados = []
 
@@ -245,6 +260,7 @@ class Usuario:
         return resultados
 
     def obtener_pagos(self, mes: str = None, apar_id: int = None) -> list[dict]:
+        """Obtiene los pagos de servicios de los apartamentos."""
         pagos = Pago(self.db)
         resultados = []
 
@@ -438,7 +454,8 @@ class Usuario:
         generador = GeneradorReportes(self.db)
         return generador.obtener_resumen_general()
 
-    def seleccionar_usuario(connector: Connector) -> "Usuario | None":
+    def seleccionar_usuario(self, connector: Connector) -> "Usuario | None":
+        """Permite al usuario seleccionar su rol y cargar sus datos."""
         print("=== Login ===")
         rol = input("Rol (admin o inquilino): ").strip().lower()
         if rol not in ("admin", "inquilino"):
